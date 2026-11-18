@@ -9,6 +9,8 @@ export interface EntriesRepository {
   add(entry: NewEntry): Promise<Entry>;
   update(id: number, entry: NewEntry): Promise<Entry>;
   remove(id: number): Promise<void>;
+  /** Deletes every logged exercise (Settings > Delete all data). Settings such as the app icon are kept. */
+  removeAll(): Promise<number>;
   getById(id: number): Promise<Entry | null>;
   /** Inclusive on both ends; ordered by date then id. */
   getByDateRange(start: DateString, end: DateString): Promise<Entry[]>;
@@ -112,6 +114,13 @@ export function createEntriesRepository(
       guard('remove', async () => {
         await db.run('DELETE FROM entries WHERE id = ?', [id]);
         notify();
+      }),
+
+    removeAll: () =>
+      guard('removeAll', async () => {
+        const result = await db.run('DELETE FROM entries');
+        notify();
+        return result.changes;
       }),
 
     getById: (id) =>

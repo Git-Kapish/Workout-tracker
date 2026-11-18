@@ -240,3 +240,48 @@ describe('subscribe', () => {
     spy.mockRestore();
   });
 });
+
+describe('removeAll (Settings > Delete all data)', () => {
+  it('deletes every entry and reports how many', async () => {
+    const { repo } = await setup();
+    await repo.add(base);
+    await repo.add({ ...base, exerciseName: 'Squat', date: '2026-11-17' });
+    await repo.add({ ...base, exerciseName: 'Old', date: '2024-01-01' });
+    expect(await repo.removeAll()).toBe(3);
+    expect(await repo.getAll()).toEqual([]);
+    expect(await repo.distinctExerciseNames()).toEqual([]);
+  });
+
+  it('is fine on an empty log', async () => {
+    const { repo } = await setup();
+    expect(await repo.removeAll()).toBe(0);
+  });
+
+  it('keeps settings (the welcome flag and the chosen app icon)', async () => {
+    const { db, repo } = await setup();
+    await db.run("INSERT INTO settings (key, value) VALUES ('app_icon', 'brand')");
+    await repo.add(base);
+    await repo.removeAll();
+    const row = await db.first<{ value: string }>(
+      "SELECT value FROM settings WHERE key = 'app_icon'",
+    );
+    expect(row?.value).toBe('brand');
+  });
+
+  it('tells subscribers so open screens refresh', async () => {
+    const { repo } = await setup();
+    await repo.add(base);
+    const listener = jest.fn();
+    repo.subscribe(listener);
+    await repo.removeAll();
+    expect(listener).toHaveBeenCalledTimes(1);
+  });
+
+  it('lets new entries be added afterwards', async () => {
+    const { repo } = await setup();
+    await repo.add(base);
+    await repo.removeAll();
+    const again = await repo.add(base);
+    expect(await repo.getAll()).toEqual([again]);
+  });
+});

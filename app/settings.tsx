@@ -1,15 +1,18 @@
 import Constants from 'expo-constants';
 import { router } from 'expo-router';
-import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
+import { Alert, Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { AppIconPicker } from '@/components/AppIconPicker';
 import { useExportAction } from '@/components/ExportButton';
+import { confirmErase } from '@/components/confirmErase';
 import { Icon } from '@/components/Icon';
 import { IconTile } from '@/components/IconTile';
 import { RoundButton } from '@/components/RoundButton';
 import { TallyLogo } from '@/components/TallyLogo';
 import { useAppIcon } from '@/hooks/useAppIcon';
+import { useEraseData } from '@/hooks/useEraseData';
+import { haptics } from '@/platform/haptics';
 import { radius, spacing, typography, useTheme } from '@/theme';
 
 /** Settings (a modal opened from the Today header): app icon, data export, about. */
@@ -18,6 +21,28 @@ export default function SettingsScreen() {
   const insets = useSafeAreaInsets();
   const icon = useAppIcon();
   const exportAction = useExportAction();
+  const eraseData = useEraseData();
+
+  const deleteEverything = async () => {
+    const entryCount = await eraseData.count();
+    if (entryCount === 0) {
+      Alert.alert('Nothing to delete', 'You have not logged anything yet.');
+      return;
+    }
+    const choice = await confirmErase(entryCount);
+    if (choice === 'export') {
+      await exportAction.run();
+      return;
+    }
+    if (choice !== 'erase') return;
+    const outcome = await eraseData.erase();
+    if (outcome === 'done') {
+      haptics.warning();
+      Alert.alert('All data deleted', 'Your log is empty. You can start fresh.');
+    } else if (outcome === 'failed') {
+      Alert.alert("Couldn't delete", 'Nothing was changed. Please try again.');
+    }
+  };
   const version = Constants.expoConfig?.version ?? '1.0.0';
 
   return (
@@ -81,6 +106,28 @@ export default function SettingsScreen() {
           <Text style={[typography.rowTitle, { color: colors.ink }]}>Export all data</Text>
           <Text style={[typography.caption, { color: colors.inkMuted }]}>
             A CSV backup: Save to Files, AirDrop or Mail
+          </Text>
+        </View>
+        <Icon name="chevronRight" color={colors.inkMuted} size={16} strokeWidth={2} />
+      </Pressable>
+
+      <Pressable
+        accessibilityRole="button"
+        accessibilityLabel="Delete all data"
+        accessibilityState={{ disabled: eraseData.erasing, busy: eraseData.erasing }}
+        disabled={eraseData.erasing}
+        onPress={() => void deleteEverything()}
+        style={({ pressed }) => [
+          styles.row,
+          { backgroundColor: colors.surface, opacity: eraseData.erasing ? 0.5 : 1 },
+          pressed && styles.pressed,
+        ]}
+      >
+        <IconTile icon="trash" />
+        <View style={styles.rowText}>
+          <Text style={[typography.rowTitle, { color: colors.trendDownFg }]}>Delete all data</Text>
+          <Text style={[typography.caption, { color: colors.inkMuted }]}>
+            Removes every logged exercise from this phone
           </Text>
         </View>
         <Icon name="chevronRight" color={colors.inkMuted} size={16} strokeWidth={2} />

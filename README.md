@@ -42,6 +42,10 @@ The file is `tally-export-YYYY-MM-DD.csv` with the columns `date,exercise,sets,r
 
 > **Important:** the app can export but **cannot import yet**. The CSV protects you in the sense that your history is safe and readable, but restoring it into the app would need CSV import, which is not built (it was marked optional in the plan).
 
+## Delete all your data
+
+**Settings > Delete all data** removes every logged exercise from the phone after two confirmations (the first offers to export a backup). It cannot be undone, and your app icon choice stays. Deleting the app also removes its data.
+
 ## Gestures
 
 - **Today:** tap a day in the row to preview it; tap the date at the top left for a month calendar (green line = something logged).
