@@ -40,6 +40,7 @@ export function WeekBarChart({ bars, metric }: WeekBarChartProps) {
             style={styles.column}
           >
             <Text
+              maxFontSizeMultiplier={1.2}
               style={[
                 typography.tabLabel,
                 {
@@ -56,7 +57,12 @@ export function WeekBarChart({ bars, metric }: WeekBarChartProps) {
                 { height, backgroundColor: bar.isSelected ? colors.ink : colors.barPast },
               ]}
             />
-            <Text style={[typography.tabLabel, { color: colors.inkMuted }]}>{bar.xLabel}</Text>
+            <Text
+              maxFontSizeMultiplier={1.2}
+              style={[typography.tabLabel, { color: colors.inkMuted }]}
+            >
+              {bar.xLabel}
+            </Text>
           </View>
         );
       })}

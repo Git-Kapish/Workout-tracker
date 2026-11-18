@@ -4,6 +4,7 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { EmptyState } from '@/components/EmptyState';
 import { HistoryRow } from '@/components/HistoryRow';
+import { LoadingState } from '@/components/LoadingState';
 import { PbCard } from '@/components/PbCard';
 import { RoundButton } from '@/components/RoundButton';
 import { WeightLineChart } from '@/components/WeightLineChart';
@@ -90,7 +91,9 @@ function ExerciseDetail({ name }: { name: string }) {
           />
         )}
         ListEmptyComponent={
-          history.loading ? undefined : history.error ? (
+          history.loading ? (
+            <LoadingState />
+          ) : history.error ? (
             <EmptyState
               title="Couldn't load this exercise."
               message={history.error.message}

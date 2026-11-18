@@ -88,3 +88,22 @@ Charts: the bar chart and line chart are simple enough that `react-native-gifted
 - Dynamic Type / larger text does not break rows (test one step up).
 - Safe areas respected: tab bar sits above the home indicator; sheet respects the keyboard.
 - All tap targets ≥ 44 pt and every control has an accessibility label.
+
+## 6. Decisions for the states the mockups don't cover (made in Phase 6)
+
+Built from the tokens above; review these on the phone and change them in `src/theme` or the named component.
+
+| State | Decision | Where |
+|---|---|---|
+| **Dark mode** | Follows the system appearance. Near-black `bg #0E0E10`, `surface #1A1A1E`, light `ink #F4F4F6`; the accent lightens to `#7B8BFF`; trend badges use dark tints with light foregrounds. The dark hero card is unchanged (it is already dark). Every text/background pair the app uses is checked against WCAG 4.5:1 (3:1 for icons and chart marks) in both appearances by `__tests__/theme/contrast.test.ts`. | `src/theme/colors.ts` |
+| **Small accent text** | `accent #4F63F5` is only 4.27:1 on the grey screen background, so links and today's day number use the slightly darker `accentText #3F51E0`. Icons, chart marks and selection tint keep the design's exact accent. | `src/theme/colors.ts` |
+| **Welcome screen** | A fixed pastel scene: always light, dark status-bar text, even in dark mode. | `app/welcome.tsx`, `src/theme/welcome.ts` |
+| **Loading** | A small spinner that appears only after 250 ms, because local queries finish in a few milliseconds and an instant spinner would just flash. | `src/components/LoadingState.tsx` |
+| **Error (whole app)** | Full-screen "Something went wrong" with a "Try again" pill. It says the workouts are safe and **never shows the underlying exception** (that goes to the dev console). The same screen is used if the database cannot be opened. | `src/components/ErrorFallback.tsx`, `app/_layout.tsx` |
+| **Error (one screen)** | An `EmptyState` card with the message and a "Try again" button. | each screen |
+| **Empty states** | `EmptyState` card: optional round icon, title, one line of guidance, and a button where an obvious next step exists (e.g. "Log an exercise"). | `src/components/EmptyState.tsx` |
+| **Export (CSV)** | A 44 pt round white button with a download icon at the right of the Today header, label "Export data as CSV". Opens the iOS share sheet. With nothing logged it says "Nothing to export yet"; on failure it says the data is safe and untouched. | `src/components/ExportButton.tsx` |
+| **Delete confirmation** | The native iOS alert "Delete this entry?" with Cancel and a destructive Delete. | `src/components/confirmDelete.ts` |
+| **Date picker** | The native inline calendar, opened by tapping the date row and closed after a day is picked. | `src/components/DatePickerField.tsx` |
+| **Larger text (Dynamic Type)** | Rows, buttons and inputs use *minimum* heights so they grow with the text. Tightly packed spots (tab labels, day cells, chart labels, totals, numeric inputs) cap scaling at 1.2 to 1.3x so columns never collide. | components |
+| **Developer tools** | A hidden screen (long-press the Today greeting, dev builds only) adds or removes 5,000 clearly named fake entries to check performance on a device. Release builds redirect away from it. | `app/debug.tsx` |

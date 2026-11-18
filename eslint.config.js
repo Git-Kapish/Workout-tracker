@@ -67,6 +67,25 @@ module.exports = defineConfig([
     files: ['src/db/client.ts'],
     rules: restrict(DB_BLOCKED, 'src/db may import only src/lib and expo-sqlite.'),
   },
+  // src/platform: thin wrappers over native modules (files, sharing). lib only.
+  {
+    files: ['src/platform/**/*.{ts,tsx}'],
+    rules: restrict(
+      [
+        'react',
+        'react-native',
+        'react-native-*',
+        'react/*',
+        ...ALIAS('db'),
+        ...ALIAS('hooks'),
+        ...ALIAS('components'),
+        ...ALIAS('theme'),
+        '@/app/*',
+        'expo-sqlite',
+      ],
+      'src/platform may import only src/lib and native modules.',
+    ),
+  },
   // src/hooks: lib + db. No UI layers.
   {
     files: ['src/hooks/**/*.{ts,tsx}'],

@@ -5,6 +5,7 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { EmptyState } from '@/components/EmptyState';
 import { ExerciseRow } from '@/components/ExerciseRow';
+import { LoadingState } from '@/components/LoadingState';
 import { SearchField } from '@/components/SearchField';
 import { useExerciseList } from '@/hooks/useExercises';
 import { useToday } from '@/hooks/useNow';
@@ -70,7 +71,9 @@ export default function ExercisesScreen() {
         </View>
       )}
       ListEmptyComponent={
-        loading ? undefined : error ? (
+        loading ? (
+          <LoadingState />
+        ) : error ? (
           <View style={styles.row}>
             <EmptyState
               title="Couldn't load your exercises."

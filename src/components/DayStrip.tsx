@@ -46,10 +46,16 @@ export function DayStrip({ days, today, selected, onSelect }: DayStripProps) {
               },
             ]}
           >
-            <Text style={[typography.caption, { color: colors.inkMuted }]}>
+            <Text
+              maxFontSizeMultiplier={1.3}
+              style={[typography.caption, { color: colors.inkMuted }]}
+            >
               {WEEKDAYS_MIN[index]}
             </Text>
-            <Text style={[styles.day, { color: isToday ? colors.accent : colors.ink }]}>
+            <Text
+              maxFontSizeMultiplier={1.3}
+              style={[styles.day, { color: isToday ? colors.accentText : colors.ink }]}
+            >
               {parseLocalDate(date)?.d}
             </Text>
             <View

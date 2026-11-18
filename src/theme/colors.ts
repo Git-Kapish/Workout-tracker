@@ -10,6 +10,8 @@ export interface Palette {
   hairline: string;
   placeholder: string;
   accent: string;
+  /** Accent for small text (links); darker than ccent so it reaches 4.5:1 on g. */
+  accentText: string;
   accentTint: string;
   barPast: string;
   trendUpBg: string;
@@ -43,6 +45,7 @@ export const lightPalette: Palette = {
   hairline: '#ECECF0',
   placeholder: '#C4C4CC',
   accent: '#4F63F5',
+  accentText: '#3F51E0',
   accentTint: '#EEF0FF',
   barPast: '#7C86E8',
   trendUpBg: '#E3F4EA',
@@ -75,6 +78,7 @@ export const darkPalette: Palette = {
   hairline: '#2C2C32',
   placeholder: '#5A5A64',
   accent: '#7B8BFF',
+  accentText: '#7B8BFF',
   accentTint: '#23264A',
   barPast: '#5963C8',
   trendUpBg: '#16352A',

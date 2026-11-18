@@ -5,6 +5,7 @@ import { FlatList, StyleSheet, Text, View } from 'react-native';
 import { DayStrip } from '@/components/DayStrip';
 import { EmptyState } from '@/components/EmptyState';
 import { EntryRow } from '@/components/EntryRow';
+import { LoadingState } from '@/components/LoadingState';
 import { WeekNavigator } from '@/components/WeekNavigator';
 import { WeekTotalsCard } from '@/components/WeekTotalsCard';
 import { useToday } from '@/hooks/useNow';
@@ -64,7 +65,9 @@ export default function WeekScreen() {
           <EntryRow entry={item} onPress={() => router.push(`/log?id=${item.id}`)} />
         )}
         ListEmptyComponent={
-          week.loading ? undefined : week.error ? (
+          week.loading ? (
+            <LoadingState />
+          ) : week.error ? (
             <EmptyState
               title="Couldn't load this week."
               message={week.error.message}

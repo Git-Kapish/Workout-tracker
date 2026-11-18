@@ -53,7 +53,7 @@ export function SegmentedToggle<T extends string>({
 const styles = StyleSheet.create({
   track: { flexDirection: 'row', gap: spacing.xs, padding: 3, borderRadius: radius.full },
   segment: {
-    height: 34,
+    minHeight: 34,
     paddingHorizontal: spacing.lg,
     borderRadius: radius.full,
     alignItems: 'center',

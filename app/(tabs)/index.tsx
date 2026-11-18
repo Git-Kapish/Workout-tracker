@@ -3,8 +3,10 @@ import { FlatList, StyleSheet, Text, View } from 'react-native';
 
 import { DayStrip } from '@/components/DayStrip';
 import { EmptyState } from '@/components/EmptyState';
+import { ExportButton } from '@/components/ExportButton';
 import { EntryRow } from '@/components/EntryRow';
 import { HeroCard } from '@/components/HeroCard';
+import { LoadingState } from '@/components/LoadingState';
 import { PillButton } from '@/components/PillButton';
 import { ScreenHeader } from '@/components/ScreenHeader';
 import { TrendBadge } from '@/components/TrendBadge';
@@ -29,7 +31,12 @@ export default function TodayScreen() {
 
   const header = (
     <View style={styles.header}>
-      <ScreenHeader datePill={formatMonthDay(today)} title={greetingFor(now.getHours())} />
+      <ScreenHeader
+        datePill={formatMonthDay(today)}
+        title={greetingFor(now.getHours())}
+        right={<ExportButton />}
+        onTitleLongPress={__DEV__ ? () => router.push('/debug') : undefined}
+      />
       <View style={styles.strip}>
         <DayStrip days={data.days} today={today} selected={today} />
       </View>
@@ -84,7 +91,9 @@ export default function TodayScreen() {
       )}
       ListHeaderComponent={header}
       ListEmptyComponent={
-        data.loading ? undefined : data.error ? (
+        data.loading ? (
+          <LoadingState />
+        ) : data.error ? (
           <View style={styles.row}>
             <EmptyState
               title="Couldn't load your log."

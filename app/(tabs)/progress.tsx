@@ -3,6 +3,7 @@ import { useState } from 'react';
 import { ScrollView, StyleSheet, Text, View } from 'react-native';
 
 import { EmptyState } from '@/components/EmptyState';
+import { LoadingState } from '@/components/LoadingState';
 import { OverallCard } from '@/components/OverallCard';
 import { SegmentedToggle } from '@/components/SegmentedToggle';
 import { StatCard } from '@/components/StatCard';
@@ -76,7 +77,9 @@ export default function ProgressScreen() {
       />
 
       <ScrollView contentContainerStyle={styles.content} showsVerticalScrollIndicator={false}>
-        {progress.loading ? null : progress.error ? (
+        {progress.loading ? (
+          <LoadingState />
+        ) : progress.error ? (
           <EmptyState
             title="Couldn't load your progress."
             message={progress.error.message}

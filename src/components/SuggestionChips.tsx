@@ -54,7 +54,7 @@ export function SuggestionChips({ names, current, onSelect }: SuggestionChipsPro
 const styles = StyleSheet.create({
   row: { gap: spacing.sm },
   chip: {
-    height: size.chip,
+    minHeight: size.chip,
     paddingHorizontal: 14,
     borderRadius: radius.full,
     justifyContent: 'center',

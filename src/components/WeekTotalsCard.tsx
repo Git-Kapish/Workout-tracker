@@ -25,10 +25,18 @@ export function WeekTotalsCard({ summary }: { summary: Summary }) {
       <View style={styles.row}>
         {stats.map(({ value, label }) => (
           <View key={label} accessible accessibilityLabel={`${value} ${label}`}>
-            <Text style={[typography.statNumber, styles.value, { color: colors.onHero }]}>
+            <Text
+              maxFontSizeMultiplier={1.2}
+              style={[typography.statNumber, styles.value, { color: colors.onHero }]}
+            >
               {value}
             </Text>
-            <Text style={[typography.caption, { color: colors.onHeroSoft }]}>{label}</Text>
+            <Text
+              maxFontSizeMultiplier={1.2}
+              style={[typography.caption, { color: colors.onHeroSoft }]}
+            >
+              {label}
+            </Text>
           </View>
         ))}
       </View>

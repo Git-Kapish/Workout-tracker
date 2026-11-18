@@ -3,14 +3,19 @@ import { Tabs } from 'expo-router/js-tabs';
 
 import { TabBar } from '@/components/TabBar';
 import { useWelcome } from '@/hooks/useWelcome';
+import { useTheme } from '@/theme';
 
 export default function TabsLayout() {
   const { seen } = useWelcome();
+  const { colors } = useTheme();
   // First launch only: show the splash before any tab (no flash of Today first).
   if (!seen) return <Redirect href="/welcome" />;
 
   return (
-    <Tabs tabBar={(props) => <TabBar {...props} />} screenOptions={{ headerShown: false }}>
+    <Tabs
+      tabBar={(props) => <TabBar {...props} />}
+      screenOptions={{ headerShown: false, sceneStyle: { backgroundColor: colors.bg } }}
+    >
       <Tabs.Screen name="index" options={{ title: 'Today' }} />
       <Tabs.Screen name="week" options={{ title: 'Week' }} />
       <Tabs.Screen name="progress" options={{ title: 'Progress' }} />

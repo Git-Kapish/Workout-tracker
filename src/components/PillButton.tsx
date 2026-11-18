@@ -52,6 +52,6 @@ export function PillButton({
 
 const styles = StyleSheet.create({
   base: { alignItems: 'center', justifyContent: 'center', borderRadius: radius.full },
-  regular: { height: size.pillButton },
-  compact: { height: 48, paddingHorizontal: spacing.xl + spacing.xs },
+  regular: { minHeight: size.pillButton },
+  compact: { minHeight: 48, paddingHorizontal: spacing.xl + spacing.xs },
 });

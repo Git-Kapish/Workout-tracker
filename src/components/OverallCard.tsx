@@ -42,7 +42,9 @@ export function OverallCard({ comparison, previousLabel }: OverallCardProps) {
         style={styles.text}
       >
         <Text style={[typography.caption, { color: colors.onHeroSoft }]}>Overall · total reps</Text>
-        <Text style={[styles.headline, { color: colors.onHero }]}>{headline}</Text>
+        <Text maxFontSizeMultiplier={1.2} style={[styles.headline, { color: colors.onHero }]}>
+          {headline}
+        </Text>
         <Text style={[typography.caption, { color: colors.onHeroSoft, fontSize: 13 }]}>
           {detail}
         </Text>
@@ -73,7 +75,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     gap: 6,
-    height: 36,
+    minHeight: 36,
     paddingHorizontal: 14,
     borderRadius: radius.full,
   },

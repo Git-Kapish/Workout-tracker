@@ -14,6 +14,7 @@ export type IconName =
   | 'chevronLeft'
   | 'moon'
   | 'search'
+  | 'download'
   | 'arrowUp'
   | 'arrowDown'
   | 'minus'
@@ -61,6 +62,7 @@ export function Icon({ name, color, size: px = size.icon, strokeWidth = 1.8 }: I
           <Path d="M16 16l4 4" />
         </>
       )}
+      {name === 'download' && <Path d="M12 4v11M7 11l5 5 5-5M5 20h14" />}
       {name === 'moon' && <Path d="M20 14.5A8 8 0 0 1 9.5 4 8 8 0 1 0 20 14.5z" />}
       {name === 'arrowUp' && <Path d="M12 19V5M6 11l6-6 6 6" />}
       {name === 'arrowDown' && <Path d="M12 5v14M6 13l6 6 6-6" />}

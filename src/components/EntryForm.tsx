@@ -36,15 +36,17 @@ interface FieldProps extends Omit<TextInputProps, 'style'> {
 }
 
 function Field({ label, error, large = false, inputRef, ...input }: FieldProps) {
-  const { colors } = useTheme();
+  const { colors, isDark } = useTheme();
   return (
     <View style={styles.field}>
       <Text style={[typography.body, styles.label, { color: colors.inkMuted }]}>{label}</Text>
       <TextInput
         ref={inputRef}
         accessibilityLabel={label}
-        placeholderTextColor={colors.placeholder}
+        placeholderTextColor={colors.inkMuted}
         selectionColor={colors.accent}
+        keyboardAppearance={isDark ? 'dark' : 'light'}
+        maxFontSizeMultiplier={large ? 1.3 : undefined}
         {...input}
         style={[
           large ? styles.numeric : styles.text,
@@ -219,8 +221,8 @@ const styles = StyleSheet.create({
   },
   field: { gap: 6 },
   label: { fontSize: 13 },
-  text: { ...input, height: size.inputName, paddingHorizontal: spacing.lg, fontSize: 17 },
-  numeric: { ...input, height: size.inputNumeric, textAlign: 'center', fontSize: 24 },
+  text: { ...input, minHeight: size.inputName, paddingHorizontal: spacing.lg, fontSize: 17 },
+  numeric: { ...input, minHeight: size.inputNumeric, textAlign: 'center', fontSize: 24 },
   chips: { marginTop: 10 },
   numbers: { flexDirection: 'row', gap: 10, marginTop: spacing.lg },
   numberCol: { flex: 1, minWidth: 0 },

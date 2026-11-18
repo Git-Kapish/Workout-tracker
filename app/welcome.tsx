@@ -1,5 +1,6 @@
 import { LinearGradient } from 'expo-linear-gradient';
 import { router } from 'expo-router';
+import { StatusBar } from 'expo-status-bar';
 import { useState } from 'react';
 import { StyleSheet, Text, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
@@ -34,6 +35,7 @@ export default function WelcomeScreen() {
 
   return (
     <View style={styles.root}>
+      <StatusBar style="dark" />
       <LinearGradient
         colors={[...welcome.background]}
         locations={[...welcome.backgroundStops]}

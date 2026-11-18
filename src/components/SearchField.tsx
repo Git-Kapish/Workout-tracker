@@ -15,7 +15,7 @@ export function SearchField({
   onChangeText,
   placeholder = 'Search exercises',
 }: SearchFieldProps) {
-  const { colors } = useTheme();
+  const { colors, isDark } = useTheme();
   return (
     <View style={[styles.field, { backgroundColor: colors.surface }]}>
       <Icon name="search" color={colors.inkMuted} size={20} strokeWidth={1.9} />
@@ -26,6 +26,7 @@ export function SearchField({
         placeholder={placeholder}
         placeholderTextColor={colors.inkMuted}
         selectionColor={colors.accent}
+        keyboardAppearance={isDark ? 'dark' : 'light'}
         inputMode="search"
         returnKeyType="search"
         autoCapitalize="none"
@@ -39,7 +40,7 @@ export function SearchField({
 
 const styles = StyleSheet.create({
   field: {
-    height: 52,
+    minHeight: 52,
     flexDirection: 'row',
     alignItems: 'center',
     gap: 10,

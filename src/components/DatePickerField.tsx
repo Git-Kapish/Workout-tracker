@@ -56,7 +56,7 @@ export function DatePickerField({ value, today, onChange }: DatePickerFieldProps
 const styles = StyleSheet.create({
   wrap: { gap: spacing.sm },
   row: {
-    height: size.inputRow,
+    minHeight: size.inputRow,
     flexDirection: 'row',
     alignItems: 'center',
     gap: 10,

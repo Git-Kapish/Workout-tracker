@@ -49,6 +49,7 @@ export function TrendBadge({ trend, percent, suffix = '', small = false }: Trend
         />
       ) : null}
       <Text
+        maxFontSizeMultiplier={1.3}
         style={[
           typography.body,
           { fontSize: small ? 12 : 13, fontWeight: '600', color: palette.fg },
@@ -65,7 +66,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     gap: spacing.xs,
-    height: size.trendBadge,
+    minHeight: size.trendBadge,
     paddingHorizontal: 10,
     borderRadius: radius.full,
     alignSelf: 'flex-start',
@@ -74,7 +75,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     gap: 3,
-    height: 22,
+    minHeight: 22,
     paddingHorizontal: spacing.sm,
     borderRadius: radius.full,
     alignSelf: 'flex-start',

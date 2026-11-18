@@ -11,11 +11,13 @@ interface ScreenHeaderProps {
   datePill: string;
   /** Lower-case title with a full stop, e.g. 'good evening.' */
   title: string;
-  /** Optional round button on the right (the CSV export button arrives in Phase 6). */
+  /** Optional round button on the right (the CSV export button on Today). */
   right?: ReactNode;
+  /** Hidden developer gesture; pass undefined in release builds. */
+  onTitleLongPress?: () => void;
 }
 
-export function ScreenHeader({ datePill, title, right }: ScreenHeaderProps) {
+export function ScreenHeader({ datePill, title, right, onTitleLongPress }: ScreenHeaderProps) {
   const { colors } = useTheme();
   const insets = useSafeAreaInsets();
 
@@ -25,7 +27,11 @@ export function ScreenHeader({ datePill, title, right }: ScreenHeaderProps) {
         <Icon name="calendar" color={colors.ink} size={16} strokeWidth={2} />
         <Text style={[typography.body, styles.pillText, { color: colors.ink }]}>{datePill}</Text>
       </View>
-      <Text accessibilityRole="header" style={[typography.screenTitle, { color: colors.ink }]}>
+      <Text
+        accessibilityRole="header"
+        onLongPress={onTitleLongPress}
+        style={[typography.screenTitle, { color: colors.ink }]}
+      >
         {title}
       </Text>
       {/* Keeps the title visually balanced when there is no right-hand button. */}
@@ -42,7 +48,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: spacing.screenX,
   },
   pill: {
-    height: 40,
+    minHeight: 40,
     flexDirection: 'row',
     alignItems: 'center',
     gap: 6,

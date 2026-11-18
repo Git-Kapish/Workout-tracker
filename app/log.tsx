@@ -5,6 +5,7 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { EntryForm } from '@/components/EntryForm';
 import { EmptyState } from '@/components/EmptyState';
+import { LoadingState } from '@/components/LoadingState';
 import { useEntriesForDate, useEntry } from '@/hooks/queries';
 import { useEntryForm } from '@/hooks/useEntryForm';
 import { useToday } from '@/hooks/useNow';
@@ -28,7 +29,13 @@ export default function LogScreen() {
   const entry = useEntry(entryId);
 
   if (wantsEdit) {
-    if (entry.loading) return <View style={[styles.fill, { backgroundColor: colors.bg }]} />;
+    if (entry.loading) {
+      return (
+        <View style={[styles.fill, styles.missing, { backgroundColor: colors.bg }]}>
+          <LoadingState />
+        </View>
+      );
+    }
     if (!entry.data) {
       return (
         <View style={[styles.fill, styles.missing, { backgroundColor: colors.bg }]}>

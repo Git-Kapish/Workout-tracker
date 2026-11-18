@@ -52,6 +52,7 @@ export function TabBar({ state, descriptors, emitter, navigateToTab, insets }: B
       >
         <Icon name={TAB_ICONS[route.name] ?? 'home'} color={tint} />
         <Text
+          maxFontSizeMultiplier={1.2}
           style={[typography.tabLabel, { color: tint, fontWeight: selected ? '600' : '500' }]}
           numberOfLines={1}
         >
@@ -92,7 +93,7 @@ export function TabBar({ state, descriptors, emitter, navigateToTab, insets }: B
 
 const styles = StyleSheet.create({
   bar: {
-    height: size.tabBar,
+    minHeight: size.tabBar,
     borderTopLeftRadius: radius.hero,
     borderTopRightRadius: radius.hero,
     justifyContent: 'center',
@@ -105,7 +106,7 @@ const styles = StyleSheet.create({
   },
   item: {
     width: size.tabItemW + spacing.sm,
-    height: size.tabItemH,
+    minHeight: size.tabItemH,
     alignItems: 'center',
     justifyContent: 'center',
     gap: spacing.xs,

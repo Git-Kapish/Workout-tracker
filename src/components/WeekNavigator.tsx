@@ -37,7 +37,9 @@ export function WeekNavigator({
       hitSlop={{ top: 14, bottom: 14, left: 10, right: 10 }}
       onPress={onJumpToToday}
     >
-      <Text style={[styles.caption, { color: colors.accent, fontWeight: '600' }]}>This week</Text>
+      <Text style={[styles.caption, { color: colors.accentText, fontWeight: '600' }]}>
+        This week
+      </Text>
     </Pressable>
   );
 

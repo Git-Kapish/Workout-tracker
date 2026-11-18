@@ -52,20 +52,29 @@ export function useRepositoryQuery<T>(
     );
   }, [repository, key]);
 
+  // Tabs stay mounted when you leave them. A screen you cannot see skips the refetch after a
+  // write (it would be wasted work on a big database) and catches up when focus returns.
+  // Starts true: a screen is only ever mounted by being focused, and tests without a navigator
+  // never blur.
+  const focused = useRef(true);
+
   useEffect(() => {
     load();
-    return repository.subscribe(load);
+    return repository.subscribe(() => {
+      if (focused.current) load();
+    });
   }, [repository, load]);
 
   const mounted = useRef(false);
   useFocusEffect(
     useCallback(() => {
+      focused.current = true;
       // useFocusEffect also fires on mount, which the effect above already covers.
-      if (!mounted.current) {
-        mounted.current = true;
-        return;
-      }
-      load();
+      if (mounted.current) load();
+      mounted.current = true;
+      return () => {
+        focused.current = false;
+      };
     }, [load]),
   );
 
