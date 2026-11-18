@@ -1,6 +1,9 @@
 import {
   formatDateLabel,
+  formatDayStats,
+  formatDayTitle,
   formatEntryDetail,
+  formatWeekRelative,
   formatEntryTotals,
   formatExerciseCount,
   formatLongDate,
@@ -57,6 +60,34 @@ describe('date labels', () => {
     expect(formatDateLabel('2026-11-18', today)).toBe('Tomorrow, Wed Nov 18');
     expect(formatDateLabel('2026-11-14', today)).toBe('Sat, Nov 14');
     expect(formatDateLabel('2025-12-31', today)).toBe('Wed, Dec 31, 2025');
+  });
+
+  it('titles a selected day, marking today (DESIGN.md 04-week)', () => {
+    expect(formatDayTitle('2026-11-17', '2026-11-17')).toBe('Tuesday, Nov 17 · Today');
+    expect(formatDayTitle('2026-11-16', '2026-11-17')).toBe('Monday, Nov 16');
+  });
+
+  it('summarises a day, and gives nothing for an empty one', () => {
+    expect(
+      formatDayStats({ exerciseCount: 2, totalSets: 7, totalReps: 50, totalVolumeKg: 3000 }),
+    ).toBe('2 exercises · 7 sets · 50 reps');
+    expect(formatDayStats({ exerciseCount: 1, totalSets: 1, totalReps: 1, totalVolumeKg: 0 })).toBe(
+      '1 exercise · 1 set · 1 rep',
+    );
+    expect(formatDayStats({ exerciseCount: 0, totalSets: 0, totalReps: 0, totalVolumeKg: 0 })).toBe(
+      '',
+    );
+  });
+
+  it('describes a week relative to this one, from any day of either week', () => {
+    const today = '2026-11-17'; // week of Mon Nov 16
+    expect(formatWeekRelative('2026-11-16', today)).toBe('This week');
+    expect(formatWeekRelative('2026-11-22', today)).toBe('This week');
+    expect(formatWeekRelative('2026-11-09', today)).toBe('Last week');
+    expect(formatWeekRelative('2026-11-23', today)).toBe('Next week');
+    expect(formatWeekRelative('2026-10-26', today)).toBe('3 weeks ago');
+    expect(formatWeekRelative('2026-12-07', today)).toBe('In 3 weeks');
+    expect(formatWeekRelative('2026-12-28', '2027-01-02')).toBe('This week'); // across New Year
   });
 
   it('chooses the greeting by local hour', () => {

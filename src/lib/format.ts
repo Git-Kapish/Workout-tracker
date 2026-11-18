@@ -1,6 +1,7 @@
 import { diffDays, parseLocalDate, weekdayIndex } from './dates';
 import { MONTHS_SHORT, WEEKDAYS_LONG, WEEKDAYS_SHORT } from './labels';
-import type { DateString, Entry } from './types';
+import type { DateString, Entry, Summary } from './types';
+import { weekStart } from './weeks';
 
 // Display formatting. Hand-rolled (not toLocaleString) so output is identical on every
 // device locale: '3,355', never '3.355'.
@@ -104,6 +105,30 @@ export function formatDateLabel(date: DateString, today: DateString): string {
   if (diff === 1) return `Tomorrow, ${short} ${formatMonthDay(date)}`;
   const year = y === parts(today).y ? '' : `, ${y}`;
   return `${short}, ${formatMonthDay(date)}${year}`;
+}
+
+/** 'Tuesday, Nov 17 · Today' (the suffix only for today). */
+export function formatDayTitle(date: DateString, today: DateString): string {
+  return `${formatLongDate(date)}${date === today ? ' · Today' : ''}`;
+}
+
+/** '2 exercises · 7 sets · 50 reps'; empty string for a day with nothing logged. */
+export function formatDayStats(summary: Summary): string {
+  if (summary.exerciseCount === 0) return '';
+  return [
+    formatExerciseCount(summary.exerciseCount),
+    plural(summary.totalSets, 'set', 'sets'),
+    formatReps(summary.totalReps),
+  ].join(' · ');
+}
+
+/** Caption under the week label: 'This week', 'Last week', '3 weeks ago', 'In 2 weeks'... */
+export function formatWeekRelative(week: DateString, today: DateString): string {
+  const weeks = Math.round(diffDays(weekStart(week), weekStart(today)) / 7);
+  if (weeks === 0) return 'This week';
+  if (weeks === -1) return 'Last week';
+  if (weeks === 1) return 'Next week';
+  return weeks < 0 ? `${-weeks} weeks ago` : `In ${weeks} weeks`;
 }
 
 /** Screen-title greeting for a local hour 0-23. */
