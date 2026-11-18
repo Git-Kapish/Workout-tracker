@@ -444,4 +444,5 @@ If the user asks for any of these later, treat it as a new phase appended to thi
 
 ## CHANGELOG
 
-- (empty — add one line per completed phase: date, phase, what was verified and how)
+- 2026-11-18 · Phase 0 · Expo SDK 58 scaffold, boundary lint rules (proven to fail on violations), theme tokens, custom tab bar. Verified: `npm run check`, iOS bundle build. iPhone check: pending.
+- 2026-11-18 · Phase 1 · `src/lib` (dates, weeks, metrics, compare, validation, format) and `src/db` (SqlExecutor, migrations, repository, expo-sqlite client); repository/migration tests run on real SQLite via `better-sqlite3` (approved devDependency). Verified: `npm run check` (145 tests incl. PRD §7.5 fixture; lib tests also run under New York/Auckland/Kolkata time zones). iPhone check of the temporary debug screen: pending.

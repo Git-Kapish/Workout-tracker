@@ -10,6 +10,7 @@
     "expo-linking": "~58.0.17",
     "expo-router": "~58.0.32",
     "expo-splash-screen": "~58.0.14",
+    "expo-sqlite": "~58.0.18",
     "expo-status-bar": "~58.0.5",
     "expo-system-ui": "~58.0.7",
     "react": "19.3.0",
@@ -24,8 +25,10 @@
   },
   "devDependencies": {
     "@testing-library/react-native": "^14.1.0",
+    "@types/better-sqlite3": "^9.6.0",
     "@types/jest": "30.0.0",
     "@types/react": "~19.3.0",
+    "better-sqlite3": "^13.2.0",
     "eslint": "^9.39.5",
     "eslint-config-expo": "~58.0.4",
     "jest": "~30.5.2",
@@ -44,7 +47,16 @@
   },
   "jest": {
     "preset": "jest-expo",
-    "testPathIgnorePatterns": ["/node_modules/", "/.expo/"]
+    "moduleNameMapper": {
+      "^@/(.*)$": "<rootDir>/src/$1"
+    },
+    "testMatch": [
+      "**/__tests__/**/*.test.[jt]s?(x)"
+    ],
+    "testPathIgnorePatterns": [
+      "/node_modules/",
+      "/.expo/"
+    ]
   },
   "private": true
 }

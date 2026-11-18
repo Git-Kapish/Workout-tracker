@@ -7,7 +7,7 @@ Personal workout tracking app: **Expo + React Native + TypeScript**, local-first
 ---
 
 ## Current status
-- Phase: **0 — Setup**: code complete, `npm run check` green; **awaiting the user's iPhone check** (update this line at the end of every phase)
+- Phase: **1 — Foundation**: code complete, `npm run check` green (145 tests); **awaiting the user's iPhone check** of the temporary debug screen (Phase 0's iPhone check was not reported back before Phase 1 started). Remove `app/debug.tsx`, its Today-tab link and its `Stack.Screen` once Phase 1 is signed off. (update this line at the end of every phase)
 - Work on **one phase at a time**. Do not start the next phase until the current phase's "Done when" checks in `plan.md` pass and the user has confirmed on the iPhone.
 
 ---
@@ -32,7 +32,7 @@ npm run check             # lint + typecheck + test  <-- run before ending every
 - There is **no iOS Simulator**. The user tests on a real iPhone with **Expo Go**.
 - Only use libraries that **work in Expo Go**. Do not add anything requiring a custom dev client or native config without asking.
 - **Check the docs for the installed Expo SDK version** before using any Expo/React Native API (e.g. `expo-sqlite`'s async API and provider). Do not rely on memory for signatures.
-- Installed: **Expo SDK 58** (React 19.3, RN 0.88, TypeScript 6). Verified facts: import `Tabs` from `expo-router/js-tabs` (the `expo-router` export is deprecated); a custom `tabBar` receives `{ state, descriptors, emitter, navigateToTab, insets }` (no `navigation`); `tsconfig` needs `"types": ["jest"]`; routes live in root `app/` (works alongside `src/`, no `src/app/`). `react-dom` is pinned to match `react` (19.3.0).
+- Installed: **Expo SDK 58** (React 19.3, RN 0.88, TypeScript 6). Verified facts: import `Tabs` from `expo-router/js-tabs` (the `expo-router` export is deprecated); a custom `tabBar` receives `{ state, descriptors, emitter, navigateToTab, insets }` (no `navigation`); `tsconfig` needs `"types": ["jest"]`; routes live in root `app/` (works alongside `src/`, no `src/app/`). `react-dom` is pinned to match `react` (19.3.0). Typed routes (`.expo/types`, gitignored) are regenerated only by the `expo start` dev server, so after adding a route run it once before `npm run typecheck`. `expo-sqlite` `withTransactionAsync` is not exclusive; fine here because writes are sequential, revisit if concurrent writers appear.
 
 ---
 

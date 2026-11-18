@@ -9,6 +9,16 @@ const restrict = (groups, message) => ({
 
 const REACT_AND_EXPO = ['react', 'react-native', 'react-native-*', 'expo', 'expo-*', 'react/*'];
 const ALIAS = (dir) => [`@/${dir}`, `@/${dir}/*`, `**/${dir}`, `**/${dir}/*`];
+const DB_BLOCKED = [
+  'react',
+  'react-native',
+  'react-native-*',
+  'react/*',
+  ...ALIAS('hooks'),
+  ...ALIAS('components'),
+  ...ALIAS('theme'),
+  '@/app/*',
+];
 
 module.exports = defineConfig([
   globalIgnores(['dist/*', '.expo/*', 'node_modules/*', 'coverage/*']),
@@ -49,18 +59,13 @@ module.exports = defineConfig([
   {
     files: ['src/db/**/*.{ts,tsx}'],
     rules: restrict(
-      [
-        'react',
-        'react-native',
-        'react-native-*',
-        'react/*',
-        ...ALIAS('hooks'),
-        ...ALIAS('components'),
-        ...ALIAS('theme'),
-        '@/app/*',
-      ],
-      'src/db may import only src/lib (types).',
+      [...DB_BLOCKED, 'expo-sqlite'],
+      'src/db may import only src/lib; expo-sqlite is allowed only in src/db/client.ts.',
     ),
+  },
+  {
+    files: ['src/db/client.ts'],
+    rules: restrict(DB_BLOCKED, 'src/db may import only src/lib and expo-sqlite.'),
   },
   // src/hooks: lib + db. No UI layers.
   {
