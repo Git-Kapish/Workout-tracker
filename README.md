@@ -36,11 +36,17 @@ Two things to know about this setup:
 
 ## Back up your data
 
-Tap the **download button** at the top right of Today and save the CSV somewhere safe (Files, iCloud Drive, AirDrop to the laptop). Do this weekly.
+Tap the **download button** at the top right of Today (or **Settings > Export all data**) and save the CSV somewhere safe (Files, iCloud Drive, AirDrop to the laptop). Do this weekly.
 
 The file is `tally-export-YYYY-MM-DD.csv` with the columns `date,exercise,sets,reps,weight_kg`, opens in Numbers or Excel, and includes every entry.
 
 > **Important:** the app can export but **cannot import yet**. The CSV protects you in the sense that your history is safe and readable, but restoring it into the app would need CSV import, which is not built (it was marked optional in the plan).
+
+## Settings and the app icon
+
+The **sliders button** next to the download button on Today opens Settings. **App icon** offers Dark (the default), Light and Brand, all from the logo pack in `tally-logo-pack/`.
+
+> **Expo Go cannot change its own icon**, and it never shows Tally's icon anyway. In Expo Go your choice is only remembered. The Home Screen icon really changes only in an installed build (TestFlight, see below), because the alternate icons are compiled into the app. `expo-alternate-app-icons` has not been run on SDK 58 on a real device yet.
 
 ## Run the checks
 

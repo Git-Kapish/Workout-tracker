@@ -165,6 +165,13 @@ describe('screens show a loading state while their data has not arrived', () => 
         <RepositoryProvider repository={hanging}>{ui}</RepositoryProvider>
       </SafeAreaProvider>,
     );
+    // The Week pager draws its pages only once it has a measured size, like on a device.
+    const pager = screen.queryByTestId('week-pager-box');
+    if (pager) {
+      await fireEvent(pager, 'layout', {
+        nativeEvent: { layout: { x: 0, y: 0, width: 390, height: 700 } },
+      });
+    }
   }
 
   it.each([

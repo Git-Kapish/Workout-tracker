@@ -1,118 +1,131 @@
 import { router } from 'expo-router';
-import { useState } from 'react';
-import { FlatList, StyleSheet, Text, View } from 'react-native';
+import { useCallback, useRef, useState } from 'react';
+import {
+  FlatList,
+  StyleSheet,
+  View,
+  type LayoutChangeEvent,
+  type NativeScrollEvent,
+  type NativeSyntheticEvent,
+} from 'react-native';
 
-import { DayStrip } from '@/components/DayStrip';
-import { EmptyState } from '@/components/EmptyState';
-import { EntryRow } from '@/components/EntryRow';
-import { LoadingState } from '@/components/LoadingState';
 import { WeekNavigator } from '@/components/WeekNavigator';
-import { WeekTotalsCard } from '@/components/WeekTotalsCard';
+import { WeekPage } from '@/components/WeekPage';
+import { useTabBarClearance } from '@/hooks/useTabBarClearance';
 import { useToday } from '@/hooks/useNow';
-import { useWeek } from '@/hooks/useWeek';
-import { addDays, diffDays } from '@/lib/dates';
-import { formatDayStats, formatDayTitle, formatWeekRelative } from '@/lib/format';
+import { weekdayIndex } from '@/lib/dates';
+import { formatWeekRelative } from '@/lib/format';
 import type { DateString } from '@/lib/types';
+import {
+  PAGER_PAGES,
+  clampPage,
+  pageForDate,
+  pageFromOffset,
+  weekStartForPage,
+} from '@/lib/weekPager';
 import { formatWeekLabel, weekStart } from '@/lib/weeks';
-import { spacing, typography, useTheme } from '@/theme';
+import { useTheme } from '@/theme';
 
+/**
+ * Week tab: a horizontal pager with one page per week. Swipe to move between weeks (native
+ * paging: momentum, snapping and rubber-banding at the ends, with the neighbouring week
+ * sliding in under your finger), or use the arrows. Moving a week keeps the weekday
+ * (Tuesday -> next Tuesday).
+ */
 export default function WeekScreen() {
   const { colors } = useTheme();
   const today = useToday();
-  // The selected day is the only state: the week shown is the week containing it, and
-  // moving a week keeps the weekday (Tuesday -> next Tuesday).
-  const [selected, setSelected] = useState<DateString>(today);
-  const week = useWeek(selected);
-  const day = week.days.find((d) => d.date === selected);
-  const start = weekStart(selected);
-  const isCurrentWeek = start === weekStart(today);
+  const bottomInset = useTabBarClearance();
+  // Page numbers are relative to the week that was current when the tab first opened.
+  const [anchor] = useState<DateString>(() => weekStart(today));
+  const todayPage = pageForDate(anchor, today);
+  const [page, setPage] = useState(todayPage);
+  const [weekday, setWeekday] = useState(() => weekdayIndex(today));
+  const [box, setBox] = useState<{ width: number; height: number } | null>(null);
+  const listRef = useRef<FlatList<number>>(null);
 
-  const emptyTitle = diffDays(selected, today) < 0 ? 'Rest day' : 'Nothing logged yet';
+  const start = weekStartForPage(anchor, page);
+
+  const goToPage = useCallback((next: number) => {
+    const target = clampPage(next);
+    setPage(target);
+    listRef.current?.scrollToIndex({ index: target, animated: true });
+  }, []);
+
+  // A threshold, not a per-frame update: state only changes when a swipe passes halfway to
+  // the next week, so the header label follows the finger without re-rendering every frame.
+  const onScroll = useCallback(
+    (event: NativeSyntheticEvent<NativeScrollEvent>) => {
+      if (!box) return;
+      const next = pageFromOffset(event.nativeEvent.contentOffset.x, box.width);
+      setPage((current) => (current === next ? current : next));
+    },
+    [box],
+  );
+
+  const onLayout = useCallback((event: LayoutChangeEvent) => {
+    const { width, height } = event.nativeEvent.layout;
+    setBox((current) =>
+      current && current.width === width && current.height === height ? current : { width, height },
+    );
+  }, []);
+
+  const jumpToToday = () => {
+    setWeekday(weekdayIndex(today));
+    goToPage(todayPage);
+  };
 
   return (
     <View style={[styles.root, { backgroundColor: colors.bg }]}>
       <WeekNavigator
         label={formatWeekLabel(start)}
         caption={formatWeekRelative(start, today)}
-        isCurrentWeek={isCurrentWeek}
-        onPrevious={() => setSelected(addDays(selected, -7))}
-        onNext={() => setSelected(addDays(selected, 7))}
-        onJumpToToday={() => setSelected(today)}
-      />
-      <View style={styles.strip}>
-        <DayStrip days={week.days} today={today} selected={selected} onSelect={setSelected} />
-      </View>
-
-      <View style={styles.heading}>
-        <Text
-          accessibilityRole="header"
-          style={[typography.rowTitle, styles.title, { color: colors.ink }]}
-        >
-          {formatDayTitle(selected, today)}
-        </Text>
-        <Text style={[typography.caption, styles.stats, { color: colors.inkMuted }]}>
-          {day ? formatDayStats(day.summary) : ''}
-        </Text>
-      </View>
-
-      <FlatList
-        style={styles.list}
-        contentContainerStyle={styles.listContent}
-        data={day?.entries ?? []}
-        keyExtractor={(entry) => String(entry.id)}
-        ItemSeparatorComponent={Separator}
-        renderItem={({ item }) => (
-          <EntryRow entry={item} onPress={() => router.push(`/log?id=${item.id}`)} />
-        )}
-        ListEmptyComponent={
-          week.loading ? (
-            <LoadingState />
-          ) : week.error ? (
-            <EmptyState
-              title="Couldn't load this week."
-              message={week.error.message}
-              actionLabel="Try again"
-              onAction={week.reload}
-            />
-          ) : (
-            <EmptyState
-              icon="moon"
-              title={emptyTitle}
-              message="Rest days are part of the plan."
-              actionLabel="Log an exercise"
-              onAction={() => router.push(`/log?date=${selected}`)}
-            />
-          )
-        }
+        isCurrentWeek={page === todayPage}
+        onPrevious={() => goToPage(page - 1)}
+        onNext={() => goToPage(page + 1)}
+        onJumpToToday={jumpToToday}
       />
 
-      <View style={styles.totals}>
-        <WeekTotalsCard summary={week.summary} />
+      <View testID="week-pager-box" style={styles.pager} onLayout={onLayout}>
+        {box ? (
+          <FlatList
+            ref={listRef}
+            testID="week-pager"
+            horizontal
+            pagingEnabled
+            data={PAGER_PAGES}
+            extraData={`${weekday}|${today}|${box.height}|${bottomInset}`}
+            keyExtractor={(index) => String(index)}
+            getItemLayout={(_, index) => ({ length: box.width, offset: box.width * index, index })}
+            initialScrollIndex={todayPage}
+            initialNumToRender={1}
+            windowSize={3}
+            maxToRenderPerBatch={1}
+            showsHorizontalScrollIndicator={false}
+            decelerationRate="fast"
+            scrollEventThrottle={16}
+            onScroll={onScroll}
+            renderItem={({ item }) => (
+              <WeekPage
+                weekStartDate={weekStartForPage(anchor, item)}
+                weekday={weekday}
+                today={today}
+                width={box.width}
+                height={box.height}
+                bottomInset={bottomInset}
+                onSelectWeekday={setWeekday}
+                onOpenEntry={(id) => router.push(`/log?id=${id}`)}
+                onLogOnDay={(date) => router.push(`/log?date=${date}`)}
+              />
+            )}
+          />
+        ) : null}
       </View>
     </View>
   );
 }
 
-function Separator() {
-  return <View style={styles.separator} />;
-}
-
 const styles = StyleSheet.create({
   root: { flex: 1 },
-  strip: { marginTop: spacing.lg },
-  heading: {
-    flexDirection: 'row',
-    alignItems: 'baseline',
-    justifyContent: 'space-between',
-    gap: spacing.md,
-    marginHorizontal: spacing.xl,
-    marginTop: 18,
-    marginBottom: 10,
-  },
-  title: { flexShrink: 1 },
-  stats: { fontSize: 13, textAlign: 'right', flexShrink: 1 },
-  list: { flex: 1 },
-  listContent: { paddingHorizontal: spacing.screenX },
-  separator: { height: 10 },
-  totals: { marginHorizontal: spacing.screenX, marginTop: spacing.sm, marginBottom: 14 },
+  pager: { flex: 1 },
 });

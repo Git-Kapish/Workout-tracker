@@ -46,6 +46,16 @@ export const size = {
   inputRow: 56,
 } as const;
 
+/** The floating glass tab bar: a capsule inset from the screen edges, over the content. */
+export const floatingBar = {
+  height: 64,
+  sideMargin: 16,
+  /** Gap between the bar and the content above it when the content is scrolled to its end. */
+  contentGap: 16,
+  /** Minimum distance from the bottom edge on phones without a home indicator. */
+  minBottom: 12,
+} as const;
+
 export const typography = {
   screenTitle: { fontSize: 20, fontWeight: '600', letterSpacing: -0.2 },
   display: { fontSize: 36, fontWeight: '700', letterSpacing: -1.08 },

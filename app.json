@@ -20,13 +20,20 @@
           "imageWidth": 120,
           "dark": {
             "backgroundColor": "#0E0E10",
-            "image": "./assets/images/splash-icon.png"
+            "image": "./assets/images/splash-icon-dark.png"
           }
         }
       ],
       "expo-sqlite",
       "@react-native-community/datetimepicker",
-      "expo-sharing"
+      "expo-sharing",
+      [
+        "expo-alternate-app-icons",
+        [
+          { "name": "IconLight", "ios": "./assets/icons/icon-light.png" },
+          { "name": "IconBrand", "ios": "./assets/icons/icon-brand.png" }
+        ]
+      ]
     ],
     "experiments": {
       "typedRoutes": true

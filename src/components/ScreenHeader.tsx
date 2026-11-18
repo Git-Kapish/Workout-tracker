@@ -4,6 +4,7 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { radius, size, spacing, typography, useTheme } from '@/theme';
 
+import { GlassSurface } from './GlassSurface';
 import { Icon } from './Icon';
 
 interface ScreenHeaderProps {
@@ -23,14 +24,18 @@ export function ScreenHeader({ datePill, title, right, onTitleLongPress }: Scree
 
   return (
     <View style={[styles.row, { paddingTop: insets.top + spacing.sm }]}>
-      <View style={[styles.pill, { backgroundColor: colors.surface }]}>
+      <GlassSurface style={styles.pill}>
         <Icon name="calendar" color={colors.ink} size={16} strokeWidth={2} />
         <Text style={[typography.body, styles.pillText, { color: colors.ink }]}>{datePill}</Text>
-      </View>
+      </GlassSurface>
+      {/* Shrinks to fit when the right-hand buttons and a large text size leave little room. */}
       <Text
         accessibilityRole="header"
         onLongPress={onTitleLongPress}
-        style={[typography.screenTitle, { color: colors.ink }]}
+        numberOfLines={1}
+        adjustsFontSizeToFit
+        minimumFontScale={0.8}
+        style={[typography.screenTitle, styles.title, { color: colors.ink }]}
       >
         {title}
       </Text>
@@ -45,9 +50,12 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
+    gap: spacing.sm,
     paddingHorizontal: spacing.screenX,
   },
+  title: { flexShrink: 1, textAlign: 'center' },
   pill: {
+    flexShrink: 0,
     minHeight: 40,
     flexDirection: 'row',
     alignItems: 'center',
@@ -56,5 +64,5 @@ const styles = StyleSheet.create({
     borderRadius: radius.full,
   },
   pillText: { fontWeight: '600' },
-  right: { minWidth: size.closeButton, alignItems: 'flex-end' },
+  right: { flexShrink: 0, minWidth: size.closeButton, alignItems: 'flex-end' },
 });

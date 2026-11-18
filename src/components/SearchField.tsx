@@ -1,7 +1,8 @@
-import { StyleSheet, TextInput, View } from 'react-native';
+import { StyleSheet, TextInput } from 'react-native';
 
 import { radius, size, typography, useTheme } from '@/theme';
 
+import { GlassSurface } from './GlassSurface';
 import { Icon } from './Icon';
 
 interface SearchFieldProps {
@@ -17,7 +18,7 @@ export function SearchField({
 }: SearchFieldProps) {
   const { colors, isDark } = useTheme();
   return (
-    <View style={[styles.field, { backgroundColor: colors.surface }]}>
+    <GlassSurface style={styles.field}>
       <Icon name="search" color={colors.inkMuted} size={20} strokeWidth={1.9} />
       <TextInput
         accessibilityLabel={placeholder}
@@ -34,7 +35,7 @@ export function SearchField({
         clearButtonMode="while-editing"
         style={[styles.input, { color: colors.ink }]}
       />
-    </View>
+    </GlassSurface>
   );
 }
 

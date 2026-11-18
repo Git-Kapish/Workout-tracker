@@ -5,6 +5,7 @@ import { DbError } from '@/db/errors';
 import { WELCOME_SEEN_KEY } from '@/db/settings';
 
 import { RepositoryProvider } from './useRepository';
+import { SettingsRepositoryProvider } from './useSettings';
 import { WelcomeProvider } from './useWelcome';
 
 interface DatabaseProviderProps {
@@ -54,9 +55,11 @@ export function DatabaseProvider({ children, loading, renderError }: DatabasePro
   if (!ready) return loading;
   return (
     <RepositoryProvider repository={ready.database.entries}>
-      <WelcomeProvider settings={ready.database.settings} initialSeen={ready.welcomeSeen}>
-        {children}
-      </WelcomeProvider>
+      <SettingsRepositoryProvider settings={ready.database.settings}>
+        <WelcomeProvider settings={ready.database.settings} initialSeen={ready.welcomeSeen}>
+          {children}
+        </WelcomeProvider>
+      </SettingsRepositoryProvider>
     </RepositoryProvider>
   );
 }

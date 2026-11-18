@@ -9,6 +9,7 @@ import { LoadingState } from '@/components/LoadingState';
 import { SearchField } from '@/components/SearchField';
 import { useExerciseList } from '@/hooks/useExercises';
 import { useToday } from '@/hooks/useNow';
+import { useTabBarClearance } from '@/hooks/useTabBarClearance';
 import { encodeExerciseSlug } from '@/lib/exerciseRoute';
 import { searchExercises } from '@/lib/exercises';
 import { formatExerciseListCount } from '@/lib/format';
@@ -16,6 +17,7 @@ import { spacing, typography, useTheme } from '@/theme';
 
 export default function ExercisesScreen() {
   const { colors } = useTheme();
+  const clearance = useTabBarClearance();
   const insets = useSafeAreaInsets();
   const today = useToday();
   const { exercises, loading, error, reload } = useExerciseList();
@@ -49,7 +51,7 @@ export default function ExercisesScreen() {
   return (
     <FlatList
       style={{ backgroundColor: colors.bg }}
-      contentContainerStyle={styles.content}
+      contentContainerStyle={[styles.content, { paddingBottom: clearance }]}
       keyboardShouldPersistTaps="handled"
       keyboardDismissMode="on-drag"
       data={shown}

@@ -15,6 +15,8 @@ export type IconName =
   | 'moon'
   | 'search'
   | 'download'
+  | 'sliders'
+  | 'check'
   | 'arrowUp'
   | 'arrowDown'
   | 'minus'
@@ -63,6 +65,14 @@ export function Icon({ name, color, size: px = size.icon, strokeWidth = 1.8 }: I
         </>
       )}
       {name === 'download' && <Path d="M12 4v11M7 11l5 5 5-5M5 20h14" />}
+      {name === 'sliders' && (
+        <>
+          <Path d="M4 7h9M17 7h3M4 17h3M11 17h9" />
+          <Circle cx={15} cy={7} r={2} />
+          <Circle cx={9} cy={17} r={2} />
+        </>
+      )}
+      {name === 'check' && <Path d="M5 12.5l4.5 4.5L19 7.5" />}
       {name === 'moon' && <Path d="M20 14.5A8 8 0 0 1 9.5 4 8 8 0 1 0 20 14.5z" />}
       {name === 'arrowUp' && <Path d="M12 19V5M6 11l6-6 6 6" />}
       {name === 'arrowDown' && <Path d="M12 5v14M6 13l6 6 6-6" />}

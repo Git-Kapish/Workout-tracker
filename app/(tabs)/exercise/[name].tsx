@@ -10,6 +10,7 @@ import { RoundButton } from '@/components/RoundButton';
 import { WeightLineChart } from '@/components/WeightLineChart';
 import { useExerciseHistory } from '@/hooks/useExercises';
 import { useToday } from '@/hooks/useNow';
+import { useTabBarClearance } from '@/hooks/useTabBarClearance';
 import { decodeExerciseSlug } from '@/lib/exerciseRoute';
 import { formatPersonalBests } from '@/lib/format';
 import { spacing, typography, useTheme } from '@/theme';
@@ -56,6 +57,7 @@ function NotFound() {
 
 function ExerciseDetail({ name }: { name: string }) {
   const { colors } = useTheme();
+  const clearance = useTabBarClearance();
   const today = useToday();
   const history = useExerciseHistory(name);
   const bests = formatPersonalBests(history.bests);
@@ -78,7 +80,7 @@ function ExerciseDetail({ name }: { name: string }) {
     <View style={[styles.root, { backgroundColor: colors.bg }]}>
       <Header title={history.displayName} />
       <FlatList
-        contentContainerStyle={styles.listContent}
+        contentContainerStyle={[styles.listContent, { paddingBottom: clearance }]}
         data={history.entries}
         keyExtractor={(entry) => String(entry.id)}
         ItemSeparatorComponent={Separator}

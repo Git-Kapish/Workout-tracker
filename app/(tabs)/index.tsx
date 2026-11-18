@@ -3,7 +3,7 @@ import { FlatList, StyleSheet, Text, View } from 'react-native';
 
 import { DayStrip } from '@/components/DayStrip';
 import { EmptyState } from '@/components/EmptyState';
-import { ExportButton } from '@/components/ExportButton';
+import { HeaderActions } from '@/components/HeaderActions';
 import { EntryRow } from '@/components/EntryRow';
 import { HeroCard } from '@/components/HeroCard';
 import { LoadingState } from '@/components/LoadingState';
@@ -11,6 +11,7 @@ import { PillButton } from '@/components/PillButton';
 import { ScreenHeader } from '@/components/ScreenHeader';
 import { TrendBadge } from '@/components/TrendBadge';
 import { useNow } from '@/hooks/useNow';
+import { useTabBarClearance } from '@/hooks/useTabBarClearance';
 import { useTodayData } from '@/hooks/useTodayData';
 import { todayLocal } from '@/lib/dates';
 import {
@@ -24,6 +25,7 @@ import { radius, size, spacing, typography, useTheme } from '@/theme';
 
 export default function TodayScreen() {
   const { colors } = useTheme();
+  const clearance = useTabBarClearance();
   const now = useNow();
   const today = todayLocal(now);
   const data = useTodayData(today);
@@ -34,7 +36,7 @@ export default function TodayScreen() {
       <ScreenHeader
         datePill={formatMonthDay(today)}
         title={greetingFor(now.getHours())}
-        right={<ExportButton />}
+        right={<HeaderActions />}
         onTitleLongPress={__DEV__ ? () => router.push('/debug') : undefined}
       />
       <View style={styles.strip}>
@@ -81,7 +83,7 @@ export default function TodayScreen() {
   return (
     <FlatList
       style={{ backgroundColor: colors.bg }}
-      contentContainerStyle={styles.content}
+      contentContainerStyle={[styles.content, { paddingBottom: clearance }]}
       data={data.entries}
       keyExtractor={(entry) => String(entry.id)}
       renderItem={({ item }) => (

@@ -12,6 +12,7 @@ import { radius } from '@/theme';
 import { welcome } from '@/theme/welcome';
 
 import { Icon, type IconName } from './Icon';
+import { TallyLogo } from './TallyLogo';
 
 // Positions are from the design source, laid out in a 390pt-wide frame centred on screen.
 const FRAME_WIDTH = 390;
@@ -41,28 +42,6 @@ function Flame({ color }: { color: string }) {
   );
 }
 
-export function TallyMark({ size }: { size: number }) {
-  return (
-    <Svg
-      width={size}
-      height={size}
-      viewBox="0 0 56 56"
-      fill="none"
-      strokeWidth={5}
-      strokeLinecap="round"
-    >
-      <Defs>
-        <SvgGradient id="tallyGradient" x1="0" y1="0" x2="1" y2="1">
-          <Stop offset="0" stopColor={welcome.tallyGradient[0]} />
-          <Stop offset="0.55" stopColor={welcome.tallyGradient[1]} />
-          <Stop offset="1" stopColor={welcome.tallyGradient[2]} />
-        </SvgGradient>
-      </Defs>
-      <Path d="M13 12v32M23 12v32M33 12v32M43 12v32M6 38 50 18" stroke="url(#tallyGradient)" />
-    </Svg>
-  );
-}
-
 /** Decorative orbit illustration. Hidden from screen readers. */
 export function WelcomeArt() {
   return (
@@ -74,7 +53,7 @@ export function WelcomeArt() {
       <View style={[styles.ring, { left: 20, top: 115, width: 350, height: 350 }]} />
       <View style={[styles.ring, { left: 85, top: 180, width: 220, height: 220 }]} />
       <View style={styles.badge}>
-        <TallyMark size={56} />
+        <TallyLogo size={56} variant="color" />
       </View>
       {TILES.map((tile) => (
         <View key={tile.name} style={[styles.tile, { left: tile.left, top: tile.top }]}>

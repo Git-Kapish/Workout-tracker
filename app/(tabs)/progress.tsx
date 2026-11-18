@@ -10,6 +10,7 @@ import { StatCard } from '@/components/StatCard';
 import { WeekBarChart } from '@/components/WeekBarChart';
 import { WeekNavigator } from '@/components/WeekNavigator';
 import { useToday } from '@/hooks/useNow';
+import { useTabBarClearance } from '@/hooks/useTabBarClearance';
 import { useProgress } from '@/hooks/useProgress';
 import { addDays } from '@/lib/dates';
 import { formatNumber } from '@/lib/format';
@@ -25,6 +26,7 @@ const METRICS = [
 
 export default function ProgressScreen() {
   const { colors } = useTheme();
+  const clearance = useTabBarClearance();
   const today = useToday();
   // Any day inside the week being compared; the week before it is the baseline.
   const [selected, setSelected] = useState<DateString>(today);
@@ -76,7 +78,10 @@ export default function ProgressScreen() {
         onJumpToToday={() => setSelected(today)}
       />
 
-      <ScrollView contentContainerStyle={styles.content} showsVerticalScrollIndicator={false}>
+      <ScrollView
+        contentContainerStyle={[styles.content, { paddingBottom: clearance }]}
+        showsVerticalScrollIndicator={false}
+      >
         {progress.loading ? (
           <LoadingState />
         ) : progress.error ? (

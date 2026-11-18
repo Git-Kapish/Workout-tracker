@@ -2,8 +2,10 @@ import { router } from 'expo-router';
 import type { BottomTabBarProps } from 'expo-router/js-tabs';
 import { Pressable, StyleSheet, Text, View } from 'react-native';
 
-import { radius, size, spacing, tabBarShadow, typography, useTheme } from '@/theme';
+import { tabBarBottomOffset } from '@/hooks/useTabBarClearance';
+import { floatingBar, radius, size, spacing, typography, useTheme } from '@/theme';
 
+import { GlassSurface } from './GlassSurface';
 import { Icon, type IconName } from './Icon';
 
 const TAB_ICONS: Record<string, IconName> = {
@@ -22,7 +24,11 @@ export function activeTabName(routeName: string): string {
   return PARENT_TAB[routeName] ?? routeName;
 }
 
-// The centre "+" is not a tab: it opens the log modal (DESIGN.md §3.1).
+/**
+ * A floating liquid-glass capsule over the content (the router lays the bar out as an
+ * absolutely positioned overlay, so screens run underneath it and pad their lists with
+ * useTabBarClearance). The centre "+" is not a tab: it opens the log modal.
+ */
 export function TabBar({ state, descriptors, emitter, navigateToTab, insets }: BottomTabBarProps) {
   const { colors } = useTheme();
   const focusedName = state.routes[state.index]?.name ?? '';
@@ -48,7 +54,12 @@ export function TabBar({ state, descriptors, emitter, navigateToTab, insets }: B
         accessibilityLabel={label}
         accessibilityState={{ selected }}
         onPress={onPress}
-        style={styles.item}
+        // Feedback on press-in, no transition: instant and never in the way of a tap.
+        style={({ pressed }) => [
+          styles.item,
+          selected && { backgroundColor: colors.fieldBg },
+          pressed && styles.pressed,
+        ]}
       >
         <Icon name={TAB_ICONS[route.name] ?? 'home'} color={tint} />
         <Text
@@ -68,7 +79,11 @@ export function TabBar({ state, descriptors, emitter, navigateToTab, insets }: B
       accessibilityRole="button"
       accessibilityLabel="Log exercise"
       onPress={() => router.push('/log')}
-      style={[styles.plus, { backgroundColor: colors.ink }]}
+      style={({ pressed }) => [
+        styles.plus,
+        { backgroundColor: colors.ink },
+        pressed && styles.pressed,
+      ]}
     >
       <Icon name="plus" color={colors.surface} />
     </Pressable>
@@ -76,46 +91,49 @@ export function TabBar({ state, descriptors, emitter, navigateToTab, insets }: B
 
   return (
     <View
+      testID="tab-bar"
+      pointerEvents="box-none"
       style={[
-        styles.bar,
-        tabBarShadow,
+        styles.wrap,
         {
-          backgroundColor: colors.surface,
-          shadowColor: colors.shadow,
-          paddingBottom: insets.bottom,
+          bottom: tabBarBottomOffset(insets.bottom),
+          left: floatingBar.sideMargin,
+          right: floatingBar.sideMargin,
         },
       ]}
     >
-      <View style={styles.row}>{[...items.slice(0, 2), plus, ...items.slice(2)]}</View>
+      <GlassSurface style={styles.capsule}>
+        {[...items.slice(0, 2), plus, ...items.slice(2)]}
+      </GlassSurface>
     </View>
   );
 }
 
 const styles = StyleSheet.create({
-  bar: {
-    minHeight: size.tabBar,
-    borderTopLeftRadius: radius.hero,
-    borderTopRightRadius: radius.hero,
-    justifyContent: 'center',
-  },
-  row: {
+  wrap: { position: 'absolute' },
+  capsule: {
+    minHeight: floatingBar.height,
     flexDirection: 'row',
     alignItems: 'center',
-    justifyContent: 'space-around',
+    justifyContent: 'space-between',
     paddingHorizontal: spacing.sm,
+    borderRadius: radius.full,
   },
   item: {
-    width: size.tabItemW + spacing.sm,
-    minHeight: size.tabItemH,
+    flex: 1,
+    minHeight: size.tabItemH - 4,
     alignItems: 'center',
     justifyContent: 'center',
-    gap: spacing.xs,
+    gap: 2,
+    borderRadius: radius.full,
   },
   plus: {
     width: size.plusButton,
     height: size.plusButton,
+    marginHorizontal: spacing.xs,
     borderRadius: radius.full,
     alignItems: 'center',
     justifyContent: 'center',
   },
+  pressed: { transform: [{ scale: 0.96 }] },
 });

@@ -1,16 +1,14 @@
-import { Alert, Pressable, StyleSheet } from 'react-native';
+import { Alert } from 'react-native';
 
 import { useExportCsv } from '@/hooks/useExportCsv';
-import { radius, size, useTheme } from '@/theme';
 
-import { Icon } from './Icon';
+import { RoundButton } from './RoundButton';
 
-/** Round button in the Today header: exports all data as a CSV (the app's only backup). */
-export function ExportButton() {
-  const { colors } = useTheme();
+/** Runs the CSV export and tells the user plainly if there was nothing to export or it failed. */
+export function useExportAction() {
   const { exporting, exportData } = useExportCsv();
 
-  const onPress = async () => {
+  const run = async () => {
     const outcome = await exportData();
     if (outcome === 'empty') {
       Alert.alert('Nothing to export yet', 'Log a workout first, then export it as a backup.');
@@ -19,26 +17,19 @@ export function ExportButton() {
     }
   };
 
-  return (
-    <Pressable
-      accessibilityRole="button"
-      accessibilityLabel="Export data as CSV"
-      accessibilityState={{ disabled: exporting, busy: exporting }}
-      disabled={exporting}
-      onPress={() => void onPress()}
-      style={[styles.button, { backgroundColor: colors.surface, opacity: exporting ? 0.5 : 1 }]}
-    >
-      <Icon name="download" color={colors.ink} size={20} strokeWidth={1.9} />
-    </Pressable>
-  );
+  return { exporting, run };
 }
 
-const styles = StyleSheet.create({
-  button: {
-    width: size.closeButton,
-    height: size.closeButton,
-    borderRadius: radius.full,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-});
+/** Glass button in the Today header: exports all data as a CSV (the app's only backup). */
+export function ExportButton() {
+  const { exporting, run } = useExportAction();
+  return (
+    <RoundButton
+      icon="download"
+      label="Export data as CSV"
+      disabled={exporting}
+      busy={exporting}
+      onPress={() => void run()}
+    />
+  );
+}

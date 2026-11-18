@@ -3,7 +3,7 @@ import { useColorScheme } from 'react-native';
 
 import { darkPalette, lightPalette, type Palette } from './colors';
 
-export { radius, size, spacing, tabBarShadow, typography } from './tokens';
+export { floatingBar, radius, size, spacing, tabBarShadow, typography } from './tokens';
 export type { Palette } from './colors';
 
 const ForceLightContext = createContext(false);

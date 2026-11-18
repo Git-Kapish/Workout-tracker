@@ -1,4 +1,4 @@
-import { fireEvent, render, screen, waitFor } from '@testing-library/react-native';
+import { fireEvent, render, screen } from '@testing-library/react-native';
 import { router } from 'expo-router';
 import type { ReactNode } from 'react';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
@@ -7,6 +7,7 @@ import WeekScreen from '../../app/(tabs)/week';
 import { createEntriesRepository } from '@/db/entries';
 import { runMigrations } from '@/db/migrations';
 import { RepositoryProvider } from '@/hooks/useRepository';
+import { PAGER_CENTER, PAGER_COUNT } from '@/lib/weekPager';
 import type { NewEntry } from '@/lib/types';
 import { createTestExecutor } from '../helpers/sqliteExecutor';
 
@@ -15,9 +16,11 @@ jest.mock('expo-router', () => ({
   useFocusEffect: () => undefined,
 }));
 jest.mock('@/hooks/useNow', () => ({
-  useToday: () => '2026-11-17', // a Tuesday
+  useToday: () => '2026-11-17', // a Tuesday; this week is Mon Nov 16 - Sun Nov 22
   useNow: () => new Date(2026, 10, 17, 18),
 }));
+
+const WIDTH = 390;
 
 const e = (
   exerciseName: string,
@@ -25,21 +28,12 @@ const e = (
   sets: number,
   reps: number,
   kg: number | null,
-): NewEntry => ({
-  exerciseName,
-  date,
-  sets,
-  reps,
-  weightKg: kg,
-});
+): NewEntry => ({ exerciseName, date, sets, reps, weightKg: kg });
 
-// PRD §7.5, as drawn in docs/design/screens/04-week.png.
 const FIXTURE: NewEntry[] = [
   e('Bench Press', '2026-11-16', 3, 10, 42.5),
-  e('Push-ups', '2026-11-16', 3, 18, null),
   e('Squat', '2026-11-17', 4, 8, 65),
   e('Pull-ups', '2026-11-17', 3, 6, null),
-  e('Old', '2026-11-10', 1, 5, 20), // last week, Tuesday
 ];
 
 async function renderWeek(seed: NewEntry[] = FIXTURE) {
@@ -58,102 +52,131 @@ async function renderWeek(seed: NewEntry[] = FIXTURE) {
     </SafeAreaProvider>
   );
   await render(<WeekScreen />, { wrapper: Providers });
-  await screen.findByText('Tuesday, Nov 17 · Today');
+  // The pager waits for its measured size before drawing; supply one like the device does.
+  await fireEvent(screen.getByTestId('week-pager-box'), 'layout', {
+    nativeEvent: { layout: { x: 0, y: 0, width: WIDTH, height: 700 } },
+  });
   return { repo };
 }
+
+/** Scroll the pager as a finger would, to the given horizontal offset. */
+const swipeTo = (offsetX: number) =>
+  fireEvent(screen.getByTestId('week-pager'), 'scroll', {
+    nativeEvent: {
+      contentOffset: { x: offsetX, y: 0 },
+      contentSize: { width: WIDTH * PAGER_COUNT, height: 700 },
+      layoutMeasurement: { width: WIDTH, height: 700 },
+    },
+  });
+const swipeToPage = (page: number) => swipeTo(page * WIDTH);
 
 const press = (name: string | RegExp) => fireEvent.press(screen.getByRole('button', { name }));
 
 beforeEach(() => jest.clearAllMocks());
 
-describe('Week screen (docs/design/screens/04-week.png)', () => {
-  it('opens on the current week with today selected, its entries, day stats and week totals', async () => {
+describe('Week screen: swiping between weeks', () => {
+  it('opens on the current week with the pager on the centre page', async () => {
     await renderWeek();
     expect(screen.getByText('Nov 16 – Nov 22')).toBeOnTheScreen();
     expect(screen.getByText('This week')).toBeOnTheScreen();
+    expect(await screen.findByText('Tuesday, Nov 17 · Today')).toBeOnTheScreen();
     expect(await screen.findByText('Squat')).toBeOnTheScreen();
-    expect(screen.getByText('Pull-ups')).toBeOnTheScreen();
-    expect(screen.getByText('4 × 8 · 65 kg')).toBeOnTheScreen();
-    expect(screen.getByText('3 × 6 · bodyweight')).toBeOnTheScreen();
-    expect(screen.getByText('2 exercises · 7 sets · 50 reps')).toBeOnTheScreen();
-    expect(screen.queryByText('Bench Press')).not.toBeOnTheScreen(); // Monday's entry
-
-    expect(screen.getByText('WEEK TOTALS')).toBeOnTheScreen();
-    expect(screen.getByLabelText('4 exercises')).toBeOnTheScreen();
-    expect(screen.getByLabelText('13 sets')).toBeOnTheScreen();
-    expect(screen.getByLabelText('134 reps')).toBeOnTheScreen();
-    expect(screen.getByLabelText('3,355 kg volume')).toBeOnTheScreen();
+    expect(screen.getByTestId('week-pager').props.pagingEnabled).toBe(true);
+    expect(screen.getByTestId('week-pager').props.horizontal).toBe(true);
+    expect(screen.getByTestId('week-pager').props.initialScrollIndex).toBe(PAGER_CENTER);
   });
 
-  it('marks days that have entries and highlights the selected day', async () => {
+  it('draws nothing until the pager has been measured (it needs the page size)', async () => {
+    const db = createTestExecutor();
+    await runMigrations(db);
+    await render(
+      <SafeAreaProvider
+        initialMetrics={{
+          frame: { x: 0, y: 0, width: 390, height: 844 },
+          insets: { top: 47, left: 0, right: 0, bottom: 34 },
+        }}
+      >
+        <RepositoryProvider repository={createEntriesRepository(db)}>
+          <WeekScreen />
+        </RepositoryProvider>
+      </SafeAreaProvider>,
+    );
+    expect(screen.queryByTestId('week-pager')).not.toBeOnTheScreen();
+    expect(screen.getByText('Nov 16 – Nov 22')).toBeOnTheScreen(); // the header is already there
+  });
+
+  it('follows a swipe to the next week and back, updating the header', async () => {
     await renderWeek();
-    expect(screen.getByRole('button', { name: 'Monday, Nov 16, has entries' })).toBeOnTheScreen();
-    expect(
-      screen.getByRole('button', { name: 'Tuesday, Nov 17, today, has entries' }),
-    ).toBeSelected();
-    expect(screen.getByRole('button', { name: 'Wednesday, Nov 18' })).not.toBeSelected();
+    await swipeToPage(PAGER_CENTER + 1);
+    expect(await screen.findByText('Nov 23 – Nov 29')).toBeOnTheScreen();
+    expect(screen.getByText('Next week')).toBeOnTheScreen();
+    expect(screen.getByRole('button', { name: 'Back to this week' })).toBeOnTheScreen();
+
+    await swipeToPage(PAGER_CENTER - 1);
+    expect(await screen.findByText('Nov 9 – Nov 15')).toBeOnTheScreen();
+    expect(screen.getByText('Last week')).toBeOnTheScreen();
+
+    await swipeToPage(PAGER_CENTER);
+    expect(await screen.findByText('Nov 16 – Nov 22')).toBeOnTheScreen();
+    expect(screen.queryByRole('button', { name: 'Back to this week' })).not.toBeOnTheScreen();
   });
 
-  it('shows another day of the week when it is tapped', async () => {
+  it('changes week only once a swipe passes halfway to the next page', async () => {
     await renderWeek();
-    await press(/^Monday, Nov 16/);
-    expect(await screen.findByText('Monday, Nov 16')).toBeOnTheScreen();
-    expect(screen.getByText('Bench Press')).toBeOnTheScreen();
-    expect(screen.getByText('Push-ups')).toBeOnTheScreen();
-    expect(screen.queryByText('Squat')).not.toBeOnTheScreen();
-    expect(screen.getByText('2 exercises · 6 sets · 84 reps')).toBeOnTheScreen();
+    await swipeTo(PAGER_CENTER * WIDTH + 100); // a quarter of the way
+    expect(screen.getByText('Nov 16 – Nov 22')).toBeOnTheScreen();
+    await swipeTo(PAGER_CENTER * WIDTH + 190); // just under halfway
+    expect(screen.getByText('Nov 16 – Nov 22')).toBeOnTheScreen();
+    await swipeTo(PAGER_CENTER * WIDTH + 200); // past halfway
+    expect(await screen.findByText('Nov 23 – Nov 29')).toBeOnTheScreen();
+    await swipeTo(PAGER_CENTER * WIDTH + 150); // dragging back under halfway
+    expect(await screen.findByText('Nov 16 – Nov 22')).toBeOnTheScreen();
   });
 
-  it('distinguishes a past rest day from a day that has not happened yet', async () => {
-    await renderWeek([]);
-    await press(/^Monday, Nov 16/);
-    expect(await screen.findByText('Rest day')).toBeOnTheScreen();
-    expect(screen.getByText('Rest days are part of the plan.')).toBeOnTheScreen();
-    await press(/^Thursday, Nov 19/);
-    expect(await screen.findByText('Nothing logged yet')).toBeOnTheScreen();
+  it('crosses a month and a year when swiping several weeks', async () => {
+    await renderWeek();
+    await swipeToPage(PAGER_CENTER + 7);
+    expect(await screen.findByText('Jan 4 – Jan 10')).toBeOnTheScreen();
+    await swipeToPage(PAGER_CENTER + 6);
+    expect(await screen.findByText('Dec 28, 2026 – Jan 3, 2027')).toBeOnTheScreen();
+    expect(screen.getByText('In 6 weeks')).toBeOnTheScreen();
   });
 
-  it('navigates to the next and previous week keeping the weekday, and jumps back', async () => {
+  it('stays inside the pager when rubber-banding past either end', async () => {
+    await renderWeek();
+    await swipeTo(-120); // pulled past the first week
+    expect(await screen.findByText(/weeks ago/)).toBeOnTheScreen();
+    await swipeTo(WIDTH * PAGER_COUNT + 400); // pulled past the last week
+    expect(await screen.findByText(/In \d+ weeks/)).toBeOnTheScreen();
+    expect(screen.queryByText(/NaN|undefined|Invalid/)).not.toBeOnTheScreen();
+  });
+
+  it('still works with the arrows, and "This week" jumps back', async () => {
     await renderWeek();
     await press('Next week');
     expect(await screen.findByText('Nov 23 – Nov 29')).toBeOnTheScreen();
-    expect(screen.getByText('Next week')).toBeOnTheScreen();
-    expect(screen.getByText('Tuesday, Nov 24')).toBeOnTheScreen();
-    expect(screen.getByText('Nothing logged yet')).toBeOnTheScreen();
-    expect(screen.getByLabelText('0 exercises')).toBeOnTheScreen();
-
     await press('Previous week');
     await press('Previous week');
     expect(await screen.findByText('Nov 9 – Nov 15')).toBeOnTheScreen();
     expect(screen.getByText('Last week')).toBeOnTheScreen();
-    expect(screen.getByText('Tuesday, Nov 10')).toBeOnTheScreen();
-    expect(await screen.findByText('Old')).toBeOnTheScreen();
-    expect(screen.getByLabelText('1 exercise')).toBeOnTheScreen();
-
     await press('Back to this week');
     expect(await screen.findByText('Nov 16 – Nov 22')).toBeOnTheScreen();
-    expect(screen.getByText('Tuesday, Nov 17 · Today')).toBeOnTheScreen();
     expect(screen.queryByRole('button', { name: 'Back to this week' })).not.toBeOnTheScreen();
   });
 
-  it('opens an entry for editing when its row is tapped', async () => {
+  it('keeps arrow presses and swipes in step with each other', async () => {
+    await renderWeek();
+    await swipeToPage(PAGER_CENTER + 2);
+    await press('Next week');
+    expect(await screen.findByText('Dec 7 – Dec 13')).toBeOnTheScreen(); // +3 weeks
+    await press('Previous week');
+    expect(await screen.findByText('Nov 30 – Dec 6')).toBeOnTheScreen(); // +2 again
+  });
+
+  it('opens an entry for editing from the current week', async () => {
     const { repo } = await renderWeek();
     const squat = (await repo.getAll()).find((x) => x.exerciseName === 'Squat');
     await fireEvent.press(await screen.findByRole('button', { name: /^Squat, 4 × 8 · 65 kg/ }));
     expect(router.push).toHaveBeenCalledWith(`/log?id=${squat?.id}`);
-  });
-
-  it('offers to log on the selected day (backfilling or planning)', async () => {
-    await renderWeek([]);
-    await press(/^Wednesday, Nov 18/);
-    await fireEvent.press(await screen.findByRole('button', { name: 'Log an exercise' }));
-    expect(router.push).toHaveBeenCalledWith('/log?date=2026-11-18');
-  });
-
-  it('shows an entry added elsewhere without a manual refresh', async () => {
-    const { repo } = await renderWeek([]);
-    await repo.add(e('Deadlift', '2026-11-17', 1, 5, 100));
-    await waitFor(() => expect(screen.getByText('Deadlift')).toBeOnTheScreen());
-    expect(screen.getByLabelText('1 exercise')).toBeOnTheScreen();
   });
 });

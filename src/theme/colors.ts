@@ -32,6 +32,9 @@ export interface Palette {
   onHeroPill: string;
   /** Gradient behind the Log sheet, top-left to bottom-right (160deg). */
   sheetBackdrop: readonly [string, string, string];
+  /** Frosted stand-in for liquid glass (iOS before 26, or Reduce Transparency on). */
+  glassFallback: string;
+  glassBorder: string;
   shadow: string;
 }
 
@@ -63,6 +66,8 @@ export const lightPalette: Palette = {
   onHeroDown: '#FF9B94',
   onHeroPill: 'rgba(255,255,255,0.14)',
   sheetBackdrop: ['#CFE3F5', '#F3D7E5', '#FBE3D2'],
+  glassFallback: 'rgba(255,255,255,0.92)',
+  glassBorder: 'rgba(255,255,255,0.9)',
   shadow: 'rgba(20,20,30,0.06)',
 };
 
@@ -96,5 +101,7 @@ export const darkPalette: Palette = {
   onHeroDown: '#FF9B94',
   onHeroPill: 'rgba(255,255,255,0.14)',
   sheetBackdrop: ['#1F2A3A', '#2E2233', '#33271F'],
+  glassFallback: 'rgba(38,38,44,0.94)',
+  glassBorder: 'rgba(255,255,255,0.12)',
   shadow: 'rgba(0,0,0,0.4)',
 };
