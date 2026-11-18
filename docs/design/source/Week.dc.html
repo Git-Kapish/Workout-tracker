@@ -1,0 +1,185 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Week</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+body{margin:0}
+</style>
+</helmet>
+<div style="width: 390px; height: 844px; box-sizing: border-box; display: flex; flex-direction: column; overflow: hidden; background: #F3F3F5; font-family: Inter, system-ui, sans-serif; color: #141414">
+<div style="padding: 56px 20px 0; display: flex; align-items: center; justify-content: space-between">
+<button aria-label="Previous week" style="width: 44px; height: 44px; border-radius: 50%; border: 0; padding: 0; background: #FFFFFF; color: #141414; display: flex; align-items: center; justify-content: center; font-family: inherit">
+<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 5l-7 7 7 7"></path></svg>
+</button>
+<div style="display: flex; flex-direction: column; align-items: center; gap: 2px">
+<div style="font-size: 20px; font-weight: 600; letter-spacing: -0.01em">Nov 16 – Nov 22</div>
+<div style="font-size: 13px; color: #6B6B73">This week</div>
+</div>
+<button aria-label="Next week" style="width: 44px; height: 44px; border-radius: 50%; border: 0; padding: 0; background: #FFFFFF; color: #141414; display: flex; align-items: center; justify-content: center; font-family: inherit">
+<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 5l7 7-7 7"></path></svg>
+</button>
+</div>
+<div style="padding: 16px 12px 0; display: flex; justify-content: space-between">
+<sc-for list="{{ days }}" as="d" hint-placeholder-count="7">
+<button aria-label="{{ d.aria }}" onClick="{{ d.pick }}" style="width: 48px; height: 68px; box-sizing: border-box; border-radius: 16px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px; cursor: pointer; font-family: inherit; color: #141414; padding: 0; background: {{ d.bg }}; border: 1.5px solid {{ d.border }}">
+<span style="font-size: 12px; color: #6B6B73">{{ d.label }}</span>
+<span style="font-size: 17px; font-weight: 600">{{ d.num }}</span>
+<span style="width: 5px; height: 5px; border-radius: 50%; background: {{ d.dotColor }}"></span>
+</button>
+</sc-for>
+</div>
+<div style="margin: 18px 24px 10px; display: flex; align-items: baseline; justify-content: space-between; gap: 12px">
+<div style="font-size: 16px; font-weight: 600">{{ selTitle }}</div>
+<div style="font-size: 13px; color: #6B6B73; text-align: right">{{ dayStats }}</div>
+</div>
+<div style="padding: 0 20px; display: flex; flex-direction: column; gap: 10px">
+<sc-if value="{{ hasEntries }}" hint-placeholder-val="{{ true }}">
+<sc-for list="{{ shown }}" as="e" hint-placeholder-count="2">
+<div style="display: flex; align-items: center; gap: 14px; background: #FFFFFF; border-radius: 22px; padding: 14px 16px; min-height: 76px; box-sizing: border-box">
+<div style="width: 44px; height: 44px; border-radius: 14px; background: #EEF0FF; color: #4F63F5; display: flex; align-items: center; justify-content: center; flex-shrink: 0">
+<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6.5 6.5v11M17.5 6.5v11M3.5 9v6M20.5 9v6M6.5 12h11"></path></svg>
+</div>
+<div style="flex-grow: 1; min-width: 0">
+<div style="font-size: 16px; font-weight: 600">{{ e.name }}</div>
+<div style="font-size: 14px; color: #6B6B73; margin-top: 2px">{{ e.detail }}</div>
+</div>
+<div style="text-align: right">
+<div style="font-size: 16px; font-weight: 600">{{ e.reps }}</div>
+<div style="font-size: 13px; color: #6B6B73; margin-top: 2px">{{ e.vol }}</div>
+</div>
+</div>
+</sc-for>
+</sc-if>
+<sc-if value="{{ isEmpty }}" hint-placeholder-val="{{ false }}">
+<div style="height: 152px; box-sizing: border-box; background: #FFFFFF; border-radius: 22px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 6px; text-align: center">
+<div style="width: 44px; height: 44px; border-radius: 50%; background: #F0F0F3; color: #6B6B73; display: flex; align-items: center; justify-content: center">
+<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 14.5A8 8 0 0 1 9.5 4 8 8 0 1 0 20 14.5z"></path></svg>
+</div>
+<div style="font-size: 16px; font-weight: 600">{{ emptyText }}</div>
+<div style="font-size: 14px; color: #6B6B73">Rest days are part of the plan.</div>
+</div>
+</sc-if>
+</div>
+<div style="flex-grow: 1"></div>
+<div style="margin: 0 20px 14px; box-sizing: border-box; border-radius: 28px; background: radial-gradient(120% 140% at 0% 100%, #3B3B42 0%, #111113 60%); color: #FFFFFF; padding: 16px 20px">
+<div style="font-size: 11px; font-weight: 600; letter-spacing: 0.14em; color: #C4C4CC">WEEK TOTALS</div>
+<div style="margin-top: 10px; display: flex; justify-content: space-between; gap: 8px">
+<div>
+<div style="font-size: 22px; font-weight: 700">{{ wk.exercises }}</div>
+<div style="font-size: 12px; color: #C4C4CC; margin-top: 2px">exercises</div>
+</div>
+<div>
+<div style="font-size: 22px; font-weight: 700">{{ wk.sets }}</div>
+<div style="font-size: 12px; color: #C4C4CC; margin-top: 2px">sets</div>
+</div>
+<div>
+<div style="font-size: 22px; font-weight: 700">{{ wk.reps }}</div>
+<div style="font-size: 12px; color: #C4C4CC; margin-top: 2px">reps</div>
+</div>
+<div>
+<div style="font-size: 22px; font-weight: 700">{{ wk.vol }}</div>
+<div style="font-size: 12px; color: #C4C4CC; margin-top: 2px">kg volume</div>
+</div>
+</div>
+</div>
+<div style="height: 92px; box-sizing: border-box; background: #FFFFFF; border-radius: 28px 28px 0 0; box-shadow: 0 -6px 24px rgba(20, 20, 30, 0.06); display: flex; align-items: flex-start; justify-content: space-between; padding: 10px 14px 0">
+<a href="Today.dc.html" style="width: 64px; height: 56px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px; text-decoration: none; color: #6B6B73; font-size: 11px; font-weight: 500">
+<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 11.5 12 5l8 6.5V19a1 1 0 0 1-1 1h-4v-5H9v5H5a1 1 0 0 1-1-1z"></path></svg>
+<span>Today</span>
+</a>
+<a href="Week.dc.html" style="width: 64px; height: 56px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px; text-decoration: none; color: #141414; font-size: 11px; font-weight: 600">
+<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="4" y="5" width="16" height="15" rx="3"></rect><path d="M4 10h16M8 3v4M16 3v4"></path></svg>
+<span>Week</span>
+</a>
+<a href="AddEntry.dc.html" aria-label="Log exercise" style="width: 56px; height: 56px; border-radius: 50%; background: #141414; color: #FFFFFF; display: flex; align-items: center; justify-content: center; text-decoration: none">
+<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><path d="M12 5v14M5 12h14"></path></svg>
+</a>
+<a href="Progress.dc.html" style="width: 64px; height: 56px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px; text-decoration: none; color: #6B6B73; font-size: 11px; font-weight: 500">
+<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 20V12M12 20V5M19 20v-9"></path></svg>
+<span>Progress</span>
+</a>
+<a href="Exercises.dc.html" style="width: 64px; height: 56px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px; text-decoration: none; color: #6B6B73; font-size: 11px; font-weight: 500">
+<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6.5 6.5v11M17.5 6.5v11M3.5 9v6M20.5 9v6M6.5 12h11"></path></svg>
+<span>Exercises</span>
+</a>
+</div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":390,"height":844}}'>
+class Component extends DCLogic {
+constructor(props) {
+super(props);
+this.state = { sel: 1 };
+}
+renderVals() {
+const fmt = (n) => n.toLocaleString('en-US');
+const raw = [
+{ label: 'Mo', name: 'Monday', num: 16, items: [ { n: 'Bench Press', s: 3, r: 10, w: 42.5 }, { n: 'Push-ups', s: 3, r: 18, w: null } ] },
+{ label: 'Tu', name: 'Tuesday', num: 17, items: [ { n: 'Squat', s: 4, r: 8, w: 65 }, { n: 'Pull-ups', s: 3, r: 6, w: null } ] },
+{ label: 'We', name: 'Wednesday', num: 18, items: [] },
+{ label: 'Th', name: 'Thursday', num: 19, items: [] },
+{ label: 'Fr', name: 'Friday', num: 20, items: [] },
+{ label: 'Sa', name: 'Saturday', num: 21, items: [] },
+{ label: 'Su', name: 'Sunday', num: 22, items: [] }
+];
+const sel = this.state.sel;
+const days = raw.map((d, i) => {
+const on = i === sel;
+return {
+label: d.label,
+num: String(d.num),
+aria: d.name + ' ' + d.num,
+bg: on ? '#FFFFFF' : 'transparent',
+border: on ? '#141414' : 'transparent',
+dotColor: d.items.length > 0 ? '#141414' : 'transparent',
+pick: () => this.setState({ sel: i })
+};
+});
+const cur = raw[sel];
+let daySets = 0;
+let dayReps = 0;
+const shown = cur.items.map((it) => {
+const reps = it.s * it.r;
+daySets += it.s;
+dayReps += reps;
+return {
+name: it.n,
+detail: it.s + ' × ' + it.r + ' · ' + (it.w === null ? 'bodyweight' : it.w + ' kg'),
+reps: reps + ' reps',
+vol: it.w === null ? 'no weight' : fmt(reps * it.w) + ' kg'
+};
+});
+let wkEx = 0;
+let wkSets = 0;
+let wkReps = 0;
+let wkVol = 0;
+raw.forEach((d) => {
+d.items.forEach((it) => {
+wkEx += 1;
+wkSets += it.s;
+wkReps += it.s * it.r;
+wkVol += it.s * it.r * (it.w || 0);
+});
+});
+return {
+days: days,
+shown: shown,
+hasEntries: shown.length > 0,
+isEmpty: shown.length === 0,
+selTitle: cur.name + ', Nov ' + cur.num + (sel === 1 ? ' · Today' : ''),
+dayStats: shown.length > 0 ? shown.length + (shown.length === 1 ? ' exercise' : ' exercises') + ' · ' + daySets + ' sets · ' + dayReps + ' reps' : '',
+emptyText: sel > 1 ? 'Nothing logged yet' : 'Rest day',
+wk: { exercises: String(wkEx), sets: String(wkSets), reps: String(wkReps), vol: fmt(wkVol) }
+};
+}
+}
+</script>
+</body>
+</html>

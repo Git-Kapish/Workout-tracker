@@ -1,0 +1,167 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Progress</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+body{margin:0}
+</style>
+</helmet>
+<div style="width: 390px; height: 844px; box-sizing: border-box; display: flex; flex-direction: column; overflow: hidden; background: #F3F3F5; font-family: Inter, system-ui, sans-serif; color: #141414">
+<div style="padding: 56px 20px 0; display: flex; align-items: center; justify-content: space-between">
+<button aria-label="Previous week" style="width: 44px; height: 44px; border-radius: 50%; border: 0; padding: 0; background: #FFFFFF; color: #141414; display: flex; align-items: center; justify-content: center; font-family: inherit">
+<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 5l-7 7 7 7"></path></svg>
+</button>
+<div style="display: flex; flex-direction: column; align-items: center; gap: 2px">
+<div style="font-size: 20px; font-weight: 600; letter-spacing: -0.01em">progress.</div>
+<div style="font-size: 13px; color: #6B6B73">Nov 16 – Nov 22 vs Nov 9 – Nov 15</div>
+</div>
+<button aria-label="Next week" style="width: 44px; height: 44px; border-radius: 50%; border: 0; padding: 0; background: #FFFFFF; color: #141414; display: flex; align-items: center; justify-content: center; font-family: inherit">
+<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 5l7 7-7 7"></path></svg>
+</button>
+</div>
+<div style="margin: 16px 20px 0; height: 92px; box-sizing: border-box; border-radius: 28px; background: radial-gradient(120% 140% at 0% 100%, #3B3B42 0%, #111113 60%); color: #FFFFFF; padding: 0 22px; display: flex; align-items: center; justify-content: space-between">
+<div>
+<div style="font-size: 12px; color: #C4C4CC">Overall · total reps</div>
+<div style="margin-top: 2px; font-size: 32px; font-weight: 700; letter-spacing: -0.02em">Up 25%</div>
+<div style="font-size: 13px; color: #C4C4CC">134 reps vs 107 last week</div>
+</div>
+<div style="display: flex; align-items: center; gap: 6px; height: 36px; padding: 0 14px; border-radius: 18px; background: rgba(255, 255, 255, 0.14); color: #8BE9B0; font-size: 14px; font-weight: 600">
+<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 19V5M6 11l6-6 6 6"></path></svg>
+<span>Up</span>
+</div>
+</div>
+<div style="margin: 12px 20px 0; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px">
+<div style="height: 96px; box-sizing: border-box; background: #FFFFFF; border-radius: 22px; padding: 14px 16px; display: flex; flex-direction: column; justify-content: space-between">
+<div style="display: flex; align-items: center; justify-content: space-between">
+<span style="font-size: 13px; color: #6B6B73">Exercises</span>
+<span style="display: flex; align-items: center; gap: 3px; height: 22px; padding: 0 8px; border-radius: 11px; background: #E3F4EA; color: #1E7B4B; font-size: 12px; font-weight: 600"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 19V5M6 11l6-6 6 6"></path></svg>+33%</span>
+</div>
+<div style="display: flex; align-items: baseline; gap: 6px">
+<span style="font-size: 28px; font-weight: 700; letter-spacing: -0.02em">4</span>
+<span style="font-size: 13px; color: #6B6B73">last week 3</span>
+</div>
+</div>
+<div style="height: 96px; box-sizing: border-box; background: #FFFFFF; border-radius: 22px; padding: 14px 16px; display: flex; flex-direction: column; justify-content: space-between">
+<div style="display: flex; align-items: center; justify-content: space-between">
+<span style="font-size: 13px; color: #6B6B73">Sets</span>
+<span style="display: flex; align-items: center; gap: 3px; height: 22px; padding: 0 8px; border-radius: 11px; background: #E3F4EA; color: #1E7B4B; font-size: 12px; font-weight: 600"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 19V5M6 11l6-6 6 6"></path></svg>+30%</span>
+</div>
+<div style="display: flex; align-items: baseline; gap: 6px">
+<span style="font-size: 28px; font-weight: 700; letter-spacing: -0.02em">13</span>
+<span style="font-size: 13px; color: #6B6B73">last week 10</span>
+</div>
+</div>
+<div style="height: 96px; box-sizing: border-box; background: #FFFFFF; border-radius: 22px; padding: 14px 16px; display: flex; flex-direction: column; justify-content: space-between">
+<div style="display: flex; align-items: center; justify-content: space-between">
+<span style="font-size: 13px; color: #6B6B73">Reps</span>
+<span style="display: flex; align-items: center; gap: 3px; height: 22px; padding: 0 8px; border-radius: 11px; background: #E3F4EA; color: #1E7B4B; font-size: 12px; font-weight: 600"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 19V5M6 11l6-6 6 6"></path></svg>+25%</span>
+</div>
+<div style="display: flex; align-items: baseline; gap: 6px">
+<span style="font-size: 28px; font-weight: 700; letter-spacing: -0.02em">134</span>
+<span style="font-size: 13px; color: #6B6B73">last week 107</span>
+</div>
+</div>
+<div style="height: 96px; box-sizing: border-box; background: #FFFFFF; border-radius: 22px; padding: 14px 16px; display: flex; flex-direction: column; justify-content: space-between">
+<div style="display: flex; align-items: center; justify-content: space-between">
+<span style="font-size: 13px; color: #6B6B73">Volume (kg)</span>
+<span style="display: flex; align-items: center; gap: 3px; height: 22px; padding: 0 8px; border-radius: 11px; background: #E3F4EA; color: #1E7B4B; font-size: 12px; font-weight: 600"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 19V5M6 11l6-6 6 6"></path></svg>+8%</span>
+</div>
+<div style="display: flex; align-items: baseline; gap: 6px">
+<span style="font-size: 28px; font-weight: 700; letter-spacing: -0.02em">3,355</span>
+<span style="font-size: 13px; color: #6B6B73">last 3,120</span>
+</div>
+</div>
+</div>
+<div style="margin: 12px 20px 0; box-sizing: border-box; background: #FFFFFF; border-radius: 28px; padding: 16px 16px 14px">
+<div style="display: flex; align-items: center; justify-content: space-between">
+<div style="font-size: 15px; font-weight: 600">Last 8 weeks</div>
+<div style="display: flex; gap: 4px; padding: 3px; border-radius: 20px; background: #F0F0F3">
+<button aria-pressed="{{ repsOn }}" onClick="{{ pickReps }}" style="height: 34px; padding: 0 16px; border-radius: 17px; border: 0; cursor: pointer; font-family: inherit; font-size: 13px; font-weight: 600; background: {{ repsBg }}; color: {{ repsColor }}">Reps</button>
+<button aria-pressed="{{ volOn }}" onClick="{{ pickVol }}" style="height: 34px; padding: 0 16px; border-radius: 17px; border: 0; cursor: pointer; font-family: inherit; font-size: 13px; font-weight: 600; background: {{ volBg }}; color: {{ volColor }}">Volume</button>
+</div>
+</div>
+<div style="margin-top: 12px; height: 134px; display: flex; gap: 4px; align-items: flex-end">
+<sc-for list="{{ bars }}" as="b" hint-placeholder-count="8">
+<div style="flex: 1 1 0; min-width: 0; height: 134px; display: flex; flex-direction: column; align-items: center; justify-content: flex-end; gap: 4px">
+<span style="font-size: 11px; color: {{ b.labelColor }}; font-weight: {{ b.weight }}">{{ b.text }}</span>
+<div style="width: 22px; border-radius: 8px 8px 3px 3px; height: {{ b.h }}px; background: {{ b.fill }}"></div>
+<span style="font-size: 11px; color: #6B6B73">{{ b.label }}</span>
+</div>
+</sc-for>
+</div>
+</div>
+<div style="flex-grow: 1"></div>
+<div style="height: 92px; box-sizing: border-box; background: #FFFFFF; border-radius: 28px 28px 0 0; box-shadow: 0 -6px 24px rgba(20, 20, 30, 0.06); display: flex; align-items: flex-start; justify-content: space-between; padding: 10px 14px 0">
+<a href="Today.dc.html" style="width: 64px; height: 56px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px; text-decoration: none; color: #6B6B73; font-size: 11px; font-weight: 500">
+<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 11.5 12 5l8 6.5V19a1 1 0 0 1-1 1h-4v-5H9v5H5a1 1 0 0 1-1-1z"></path></svg>
+<span>Today</span>
+</a>
+<a href="Week.dc.html" style="width: 64px; height: 56px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px; text-decoration: none; color: #6B6B73; font-size: 11px; font-weight: 500">
+<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="4" y="5" width="16" height="15" rx="3"></rect><path d="M4 10h16M8 3v4M16 3v4"></path></svg>
+<span>Week</span>
+</a>
+<a href="AddEntry.dc.html" aria-label="Log exercise" style="width: 56px; height: 56px; border-radius: 50%; background: #141414; color: #FFFFFF; display: flex; align-items: center; justify-content: center; text-decoration: none">
+<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><path d="M12 5v14M5 12h14"></path></svg>
+</a>
+<a href="Progress.dc.html" style="width: 64px; height: 56px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px; text-decoration: none; color: #141414; font-size: 11px; font-weight: 600">
+<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 20V12M12 20V5M19 20v-9"></path></svg>
+<span>Progress</span>
+</a>
+<a href="Exercises.dc.html" style="width: 64px; height: 56px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px; text-decoration: none; color: #6B6B73; font-size: 11px; font-weight: 500">
+<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6.5 6.5v11M17.5 6.5v11M3.5 9v6M20.5 9v6M6.5 12h11"></path></svg>
+<span>Exercises</span>
+</a>
+</div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":390,"height":844}}'>
+class Component extends DCLogic {
+constructor(props) {
+super(props);
+this.state = { metric: 'reps' };
+}
+renderVals() {
+const m = this.state.metric;
+const labels = ['9/28', '10/5', '10/12', '10/19', '10/26', '11/2', '11/9', '11/16'];
+const reps = [88, 96, 0, 101, 94, 99, 107, 134];
+const vol = [2640, 2780, 0, 2950, 2870, 3010, 3120, 3355];
+const data = m === 'reps' ? reps : vol;
+const max = Math.max.apply(null, data);
+const bars = data.map((v, i) => {
+const last = i === data.length - 1;
+const h = v === 0 ? 3 : Math.max(6, Math.round((v / max) * 90));
+const text = m === 'reps' ? String(v) : (v === 0 ? '0' : (Math.round(v / 100) / 10).toFixed(1) + 'k');
+return {
+label: labels[i],
+text: text,
+h: String(h),
+fill: last ? '#141414' : '#7C86E8',
+labelColor: last ? '#141414' : '#6B6B73',
+weight: last ? '700' : '500'
+};
+});
+const repsOn = m === 'reps';
+const volOn = m === 'volume';
+return {
+bars: bars,
+repsOn: repsOn,
+volOn: volOn,
+repsBg: repsOn ? '#141414' : 'transparent',
+repsColor: repsOn ? '#FFFFFF' : '#141414',
+volBg: volOn ? '#141414' : 'transparent',
+volColor: volOn ? '#FFFFFF' : '#141414',
+pickReps: () => this.setState({ metric: 'reps' }),
+pickVol: () => this.setState({ metric: 'volume' })
+};
+}
+}
+</script>
+</body>
+</html>

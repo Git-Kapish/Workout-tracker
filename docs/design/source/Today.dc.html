@@ -1,0 +1,137 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Today</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+body{margin:0}
+</style>
+</helmet>
+<div style="width: 390px; height: 844px; box-sizing: border-box; display: flex; flex-direction: column; overflow: hidden; background: #F3F3F5; font-family: Inter, system-ui, sans-serif; color: #141414">
+<div style="padding: 56px 20px 0; display: flex; align-items: center; justify-content: space-between">
+<div style="height: 40px; box-sizing: border-box; padding: 0 14px; border-radius: 20px; background: #FFFFFF; display: flex; align-items: center; gap: 6px; font-size: 14px; font-weight: 600">
+<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="4" y="5" width="16" height="15" rx="3"></rect><path d="M4 10h16M8 3v4M16 3v4"></path></svg>
+<span>Nov 17</span>
+</div>
+<div style="font-size: 20px; font-weight: 600; letter-spacing: -0.01em">good evening.</div>
+<button aria-label="Export data as CSV" style="width: 44px; height: 44px; border-radius: 50%; border: 0; padding: 0; background: #FFFFFF; color: #141414; display: flex; align-items: center; justify-content: center; font-family: inherit">
+<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 4v11M7 11l5 5 5-5M5 20h14"></path></svg>
+</button>
+</div>
+<div style="padding: 14px 12px 0; display: flex; justify-content: space-between">
+<div style="width: 48px; height: 68px; box-sizing: border-box; border-radius: 16px; border: 1.5px solid transparent; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px">
+<span style="font-size: 12px; color: #6B6B73">Mo</span>
+<span style="font-size: 17px; font-weight: 600">16</span>
+<span style="width: 5px; height: 5px; border-radius: 50%; background: #141414"></span>
+</div>
+<div style="width: 48px; height: 68px; box-sizing: border-box; border-radius: 16px; border: 1.5px solid #141414; background: #FFFFFF; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px">
+<span style="font-size: 12px; color: #6B6B73">Tu</span>
+<span style="font-size: 17px; font-weight: 600">17</span>
+<span style="width: 5px; height: 5px; border-radius: 50%; background: #141414"></span>
+</div>
+<div style="width: 48px; height: 68px; box-sizing: border-box; border-radius: 16px; border: 1.5px solid transparent; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px">
+<span style="font-size: 12px; color: #6B6B73">We</span>
+<span style="font-size: 17px; font-weight: 600">18</span>
+<span style="width: 5px; height: 5px; border-radius: 50%; background: transparent"></span>
+</div>
+<div style="width: 48px; height: 68px; box-sizing: border-box; border-radius: 16px; border: 1.5px solid transparent; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px">
+<span style="font-size: 12px; color: #6B6B73">Th</span>
+<span style="font-size: 17px; font-weight: 600">19</span>
+<span style="width: 5px; height: 5px; border-radius: 50%; background: transparent"></span>
+</div>
+<div style="width: 48px; height: 68px; box-sizing: border-box; border-radius: 16px; border: 1.5px solid transparent; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px">
+<span style="font-size: 12px; color: #6B6B73">Fr</span>
+<span style="font-size: 17px; font-weight: 600">20</span>
+<span style="width: 5px; height: 5px; border-radius: 50%; background: transparent"></span>
+</div>
+<div style="width: 48px; height: 68px; box-sizing: border-box; border-radius: 16px; border: 1.5px solid transparent; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px">
+<span style="font-size: 12px; color: #6B6B73">Sa</span>
+<span style="font-size: 17px; font-weight: 600">21</span>
+<span style="width: 5px; height: 5px; border-radius: 50%; background: transparent"></span>
+</div>
+<div style="width: 48px; height: 68px; box-sizing: border-box; border-radius: 16px; border: 1.5px solid transparent; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px">
+<span style="font-size: 12px; color: #6B6B73">Su</span>
+<span style="font-size: 17px; font-weight: 600">22</span>
+<span style="width: 5px; height: 5px; border-radius: 50%; background: transparent"></span>
+</div>
+</div>
+<div style="margin: 16px 20px 0; height: 190px; box-sizing: border-box; border-radius: 32px; background: radial-gradient(120% 120% at 0% 100%, #3B3B42 0%, #111113 58%); color: #FFFFFF; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 6px">
+<div style="font-size: 13px; color: #C4C4CC">Tuesday, Nov 17</div>
+<div style="font-size: 20px; font-weight: 600">2 exercises logged so far</div>
+<a href="AddEntry.dc.html" style="margin-top: 12px; height: 48px; box-sizing: border-box; padding: 0 28px; border-radius: 24px; background: #FFFFFF; color: #141414; font-size: 15px; font-weight: 600; text-decoration: none; display: flex; align-items: center; justify-content: center">Add exercise</a>
+</div>
+<div style="margin: 22px 24px 10px; font-size: 11px; font-weight: 600; letter-spacing: 0.14em; color: #6B6B73">TODAY'S LOG</div>
+<div style="padding: 0 20px; display: flex; flex-direction: column; gap: 10px">
+<div style="display: flex; align-items: center; gap: 14px; background: #FFFFFF; border-radius: 22px; padding: 14px 16px; min-height: 76px; box-sizing: border-box">
+<div style="width: 44px; height: 44px; border-radius: 14px; background: #EEF0FF; color: #4F63F5; display: flex; align-items: center; justify-content: center; flex-shrink: 0">
+<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6.5 6.5v11M17.5 6.5v11M3.5 9v6M20.5 9v6M6.5 12h11"></path></svg>
+</div>
+<div style="flex-grow: 1; min-width: 0">
+<div style="font-size: 16px; font-weight: 600">Squat</div>
+<div style="font-size: 14px; color: #6B6B73; margin-top: 2px">4 × 8 · 65 kg</div>
+</div>
+<div style="text-align: right">
+<div style="font-size: 16px; font-weight: 600">32 reps</div>
+<div style="font-size: 13px; color: #6B6B73; margin-top: 2px">2,080 kg</div>
+</div>
+</div>
+<div style="display: flex; align-items: center; gap: 14px; background: #FFFFFF; border-radius: 22px; padding: 14px 16px; min-height: 76px; box-sizing: border-box">
+<div style="width: 44px; height: 44px; border-radius: 14px; background: #EEF0FF; color: #4F63F5; display: flex; align-items: center; justify-content: center; flex-shrink: 0">
+<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6.5 6.5v11M17.5 6.5v11M3.5 9v6M20.5 9v6M6.5 12h11"></path></svg>
+</div>
+<div style="flex-grow: 1; min-width: 0">
+<div style="font-size: 16px; font-weight: 600">Pull-ups</div>
+<div style="font-size: 14px; color: #6B6B73; margin-top: 2px">3 × 6 · bodyweight</div>
+</div>
+<div style="text-align: right">
+<div style="font-size: 16px; font-weight: 600">18 reps</div>
+<div style="font-size: 13px; color: #6B6B73; margin-top: 2px">no weight</div>
+</div>
+</div>
+<div style="display: flex; align-items: center; justify-content: space-between; background: #FFFFFF; border-radius: 22px; padding: 0 16px; height: 60px; box-sizing: border-box">
+<div style="font-size: 14px; color: #6B6B73">This week · <span style="color: #141414; font-weight: 600">134 reps</span></div>
+<div style="display: flex; align-items: center; gap: 4px; height: 28px; padding: 0 10px; border-radius: 14px; background: #E3F4EA; color: #1E7B4B; font-size: 13px; font-weight: 600">
+<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 19V5M6 11l6-6 6 6"></path></svg>
+<span>+25% vs last week</span>
+</div>
+</div>
+</div>
+<div style="flex-grow: 1"></div>
+<div style="height: 92px; box-sizing: border-box; background: #FFFFFF; border-radius: 28px 28px 0 0; box-shadow: 0 -6px 24px rgba(20, 20, 30, 0.06); display: flex; align-items: flex-start; justify-content: space-between; padding: 10px 14px 0">
+<a href="Today.dc.html" style="width: 64px; height: 56px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px; text-decoration: none; color: #141414; font-size: 11px; font-weight: 600">
+<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 11.5 12 5l8 6.5V19a1 1 0 0 1-1 1h-4v-5H9v5H5a1 1 0 0 1-1-1z"></path></svg>
+<span>Today</span>
+</a>
+<a href="Week.dc.html" style="width: 64px; height: 56px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px; text-decoration: none; color: #6B6B73; font-size: 11px; font-weight: 500">
+<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="4" y="5" width="16" height="15" rx="3"></rect><path d="M4 10h16M8 3v4M16 3v4"></path></svg>
+<span>Week</span>
+</a>
+<a href="AddEntry.dc.html" aria-label="Log exercise" style="width: 56px; height: 56px; border-radius: 50%; background: #141414; color: #FFFFFF; display: flex; align-items: center; justify-content: center; text-decoration: none">
+<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><path d="M12 5v14M5 12h14"></path></svg>
+</a>
+<a href="Progress.dc.html" style="width: 64px; height: 56px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px; text-decoration: none; color: #6B6B73; font-size: 11px; font-weight: 500">
+<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 20V12M12 20V5M19 20v-9"></path></svg>
+<span>Progress</span>
+</a>
+<a href="Exercises.dc.html" style="width: 64px; height: 56px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px; text-decoration: none; color: #6B6B73; font-size: 11px; font-weight: 500">
+<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6.5 6.5v11M17.5 6.5v11M3.5 9v6M20.5 9v6M6.5 12h11"></path></svg>
+<span>Exercises</span>
+</a>
+</div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":390,"height":844}}'>
+class Component extends DCLogic {
+renderVals() {
+return {};
+}
+}
+</script>
+</body>
+</html>

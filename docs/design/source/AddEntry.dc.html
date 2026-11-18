@@ -1,0 +1,73 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Log exercise</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+body{margin:0}
+input{font-family:inherit}
+</style>
+</helmet>
+<div style="width: 390px; height: 844px; box-sizing: border-box; position: relative; display: flex; flex-direction: column; justify-content: flex-end; overflow: hidden; background: linear-gradient(160deg, #CFE3F5 0%, #F3D7E5 55%, #FBE3D2 100%); font-family: Inter, system-ui, sans-serif; color: #141414">
+<div style="position: absolute; left: 0; right: 0; top: 0; height: 236px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px">
+<div style="font-size: 11px; font-weight: 600; letter-spacing: 0.14em; color: #4A4A55">TUESDAY</div>
+<div style="font-size: 36px; font-weight: 700; letter-spacing: -0.03em">Nov 17</div>
+<div style="font-size: 14px; color: #4A4A55">2 exercises logged today</div>
+</div>
+<div style="height: 622px; box-sizing: border-box; background: #FFFFFF; border-radius: 36px 36px 0 0; padding: 24px 24px 28px; display: flex; flex-direction: column; box-shadow: 0 -10px 40px rgba(60, 60, 100, 0.12)">
+<div style="display: flex; align-items: center; justify-content: space-between">
+<div style="width: 56px; height: 56px; border-radius: 18px; background: #F5F5F7; color: #141414; display: flex; align-items: center; justify-content: center">
+<svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6.5 6.5v11M17.5 6.5v11M3.5 9v6M20.5 9v6M6.5 12h11"></path></svg>
+</div>
+<a href="Today.dc.html" aria-label="Close" style="width: 44px; height: 44px; border-radius: 50%; background: #EDEDF0; color: #6B6B73; display: flex; align-items: center; justify-content: center; text-decoration: none">
+<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6 6 18"></path></svg>
+</a>
+</div>
+<div style="margin-top: 14px; font-size: 26px; font-weight: 700; letter-spacing: -0.02em">Log exercise</div>
+<div style="margin-top: 4px; font-size: 15px; color: #6B6B73">Prefilled from your last Squat session.</div>
+<label for="exName" style="margin-top: 18px; font-size: 13px; font-weight: 500; color: #6B6B73">Exercise</label>
+<input id="exName" value="Squat" style="margin-top: 6px; height: 56px; box-sizing: border-box; width: 100%; border: 0; border-radius: 16px; background: #F0F0F3; padding: 0 16px; font-size: 17px; font-weight: 600; color: #141414">
+<div style="margin-top: 10px; display: flex; gap: 8px">
+<div style="height: 44px; box-sizing: border-box; padding: 0 14px; border-radius: 22px; background: #141414; color: #FFFFFF; font-size: 14px; font-weight: 600; display: flex; align-items: center">Squat</div>
+<div style="height: 44px; box-sizing: border-box; padding: 0 14px; border-radius: 22px; background: #F0F0F3; color: #141414; font-size: 14px; font-weight: 500; display: flex; align-items: center">Bench Press</div>
+<div style="height: 44px; box-sizing: border-box; padding: 0 14px; border-radius: 22px; background: #F0F0F3; color: #141414; font-size: 14px; font-weight: 500; display: flex; align-items: center">Pull-ups</div>
+</div>
+<div style="margin-top: 16px; display: flex; gap: 10px">
+<div style="flex: 1 1 0; min-width: 0; display: flex; flex-direction: column; gap: 6px">
+<label for="exSets" style="font-size: 13px; font-weight: 500; color: #6B6B73">Sets</label>
+<input id="exSets" value="4" inputmode="numeric" style="height: 64px; box-sizing: border-box; width: 100%; border: 0; border-radius: 16px; background: #F0F0F3; text-align: center; font-size: 24px; font-weight: 600; color: #141414">
+</div>
+<div style="flex: 1 1 0; min-width: 0; display: flex; flex-direction: column; gap: 6px">
+<label for="exReps" style="font-size: 13px; font-weight: 500; color: #6B6B73">Reps per set</label>
+<input id="exReps" value="8" inputmode="numeric" style="height: 64px; box-sizing: border-box; width: 100%; border: 0; border-radius: 16px; background: #F0F0F3; text-align: center; font-size: 24px; font-weight: 600; color: #141414">
+</div>
+<div style="flex: 1 1 0; min-width: 0; display: flex; flex-direction: column; gap: 6px">
+<label for="exWeight" style="font-size: 13px; font-weight: 500; color: #6B6B73">Weight (kg)</label>
+<input id="exWeight" value="65" inputmode="decimal" style="height: 64px; box-sizing: border-box; width: 100%; border: 0; border-radius: 16px; background: #F0F0F3; text-align: center; font-size: 24px; font-weight: 600; color: #141414">
+</div>
+</div>
+<div style="margin-top: 16px; height: 56px; box-sizing: border-box; border-radius: 16px; background: #F0F0F3; padding: 0 16px; display: flex; align-items: center; gap: 10px; font-size: 16px; font-weight: 500">
+<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="4" y="5" width="16" height="15" rx="3"></rect><path d="M4 10h16M8 3v4M16 3v4"></path></svg>
+<span style="flex-grow: 1">Today, Tue Nov 17</span>
+<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#6B6B73" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 5l7 7-7 7"></path></svg>
+</div>
+<a href="Today.dc.html" style="margin-top: 20px; height: 56px; box-sizing: border-box; border-radius: 28px; background: #141414; color: #FFFFFF; font-size: 16px; font-weight: 600; text-decoration: none; display: flex; align-items: center; justify-content: center">Save exercise</a>
+<div style="margin-top: 12px; font-size: 12px; line-height: 16px; color: #6B6B73; text-align: center">Sets 1–50 · Reps 1–1000 · Weight accepts . or ,</div>
+</div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":390,"height":844}}'>
+class Component extends DCLogic {
+renderVals() {
+return {};
+}
+}
+</script>
+</body>
+</html>
