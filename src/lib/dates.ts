@@ -65,6 +65,16 @@ export function diffDays(a: DateString, b: DateString): number {
   return Math.round((toUtcMs(a) - toUtcMs(b)) / MS_PER_DAY);
 }
 
+/**
+ * A Date at local noon on `date`, for native date pickers. Noon keeps it on the right
+ * calendar day through any DST shift. Convert back with todayLocal().
+ */
+export function toPickerDate(date: DateString): Date {
+  const ymd = parseLocalDate(date);
+  if (!ymd) throw new Error(`Invalid date string: "${date}"`);
+  return new Date(ymd.y, ymd.m - 1, ymd.d, 12);
+}
+
 /** 0 = Monday ... 6 = Sunday. */
 export function weekdayIndex(date: DateString): number {
   return (new Date(toUtcMs(date)).getUTCDay() + 6) % 7;

@@ -3,9 +3,15 @@ import * as SQLite from 'expo-sqlite';
 import { createEntriesRepository, type EntriesRepository } from './entries';
 import { guard } from './errors';
 import { runMigrations } from './migrations';
+import { createSettingsRepository, type SettingsRepository } from './settings';
 import type { SqlExecutor } from './sql';
 
 export const DATABASE_NAME = 'tally.db';
+
+export interface Database {
+  entries: EntriesRepository;
+  settings: SettingsRepository;
+}
 
 function createExpoExecutor(db: SQLite.SQLiteDatabase): SqlExecutor {
   return {
@@ -30,13 +36,16 @@ function createExpoExecutor(db: SQLite.SQLiteDatabase): SqlExecutor {
   };
 }
 
-/** Opens the on-device database, migrates it to the latest schema, and returns the repository. */
-export function openDatabase(name: string = DATABASE_NAME): Promise<EntriesRepository> {
+/** Opens the on-device database, migrates it to the latest schema, and returns its repositories. */
+export function openDatabase(name: string = DATABASE_NAME): Promise<Database> {
   return guard('open', async () => {
     const db = await SQLite.openDatabaseAsync(name);
     await db.execAsync('PRAGMA journal_mode = WAL');
     const executor = createExpoExecutor(db);
     await runMigrations(executor);
-    return createEntriesRepository(executor);
+    return {
+      entries: createEntriesRepository(executor),
+      settings: createSettingsRepository(executor),
+    };
   });
 }

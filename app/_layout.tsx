@@ -2,7 +2,7 @@ import { Stack } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
 import { StyleSheet, Text, View } from 'react-native';
 
-import { DatabaseProvider } from '@/hooks/useRepository';
+import { DatabaseProvider } from '@/hooks/DatabaseProvider';
 import { spacing, typography, useTheme } from '@/theme';
 
 function Centered({ title, message }: { title?: string; message?: string }) {
@@ -27,8 +27,8 @@ export default function RootLayout() {
       <StatusBar style="auto" />
       <Stack screenOptions={{ headerShown: false }}>
         <Stack.Screen name="(tabs)" />
+        <Stack.Screen name="welcome" options={{ gestureEnabled: false }} />
         <Stack.Screen name="log" options={{ presentation: 'modal' }} />
-        <Stack.Screen name="debug" />
       </Stack>
     </DatabaseProvider>
   );

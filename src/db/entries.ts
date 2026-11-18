@@ -9,6 +9,7 @@ export interface EntriesRepository {
   add(entry: NewEntry): Promise<Entry>;
   update(id: number, entry: NewEntry): Promise<Entry>;
   remove(id: number): Promise<void>;
+  getById(id: number): Promise<Entry | null>;
   /** Inclusive on both ends; ordered by date then id. */
   getByDateRange(start: DateString, end: DateString): Promise<Entry[]>;
   /** Case-insensitive (ASCII); newest first. */
@@ -111,6 +112,12 @@ export function createEntriesRepository(
       guard('remove', async () => {
         await db.run('DELETE FROM entries WHERE id = ?', [id]);
         notify();
+      }),
+
+    getById: (id) =>
+      guard('getById', async () => {
+        const row = await db.first<unknown>(`SELECT ${COLUMNS} FROM entries WHERE id = ?`, [id]);
+        return row === null ? null : toEntry(row);
       }),
 
     getByDateRange: (start, end) =>

@@ -38,14 +38,38 @@ describe('runMigrations', () => {
     await db.run(
       `INSERT INTO entries (exercise_name, sets, reps, weight_kg, date, created_at) VALUES ('Squat', 4, 8, 60, '2026-11-17', 'x')`,
     );
-    const v2: Migration[] = [
+    const next = MIGRATIONS.length + 1;
+    const extended: Migration[] = [
       ...MIGRATIONS,
-      { version: 2, up: `ALTER TABLE entries ADD COLUMN note TEXT;` },
+      { version: next, up: `ALTER TABLE entries ADD COLUMN note TEXT;` },
     ];
-    expect(await runMigrations(db, v2)).toBe(2);
-    expect(await version(db)).toBe(2);
+    expect(await runMigrations(db, extended)).toBe(next);
+    expect(await version(db)).toBe(next);
     expect(await db.all('SELECT exercise_name, sets, note FROM entries')).toEqual([
       { exercise_name: 'Squat', sets: 4, note: null },
+    ]);
+    db.close();
+  });
+
+  it('upgrades a shipped v1 database with real data to the latest schema, losing nothing', async () => {
+    const db = createTestExecutor();
+    await runMigrations(db, MIGRATIONS.slice(0, 1)); // what a phone running Phase 1 has
+    for (const [name, date] of [
+      ['Squat', '2026-11-16'],
+      ['Bench Press', '2026-11-17'],
+    ]) {
+      await db.run(
+        `INSERT INTO entries (exercise_name, sets, reps, weight_kg, date, created_at) VALUES (?, 4, 8, 65, ?, 'x')`,
+        [name, date],
+      );
+    }
+    expect(await version(db)).toBe(1);
+
+    expect(await runMigrations(db)).toBe(MIGRATIONS.length);
+    expect(await tableExists(db, 'settings')).toBe(true);
+    expect(await db.all('SELECT exercise_name, date FROM entries ORDER BY id')).toEqual([
+      { exercise_name: 'Squat', date: '2026-11-16' },
+      { exercise_name: 'Bench Press', date: '2026-11-17' },
     ]);
     db.close();
   });
@@ -55,10 +79,13 @@ describe('runMigrations', () => {
     await runMigrations(db);
     const broken: Migration[] = [
       ...MIGRATIONS,
-      { version: 2, up: `CREATE TABLE half_done (id INTEGER); THIS IS NOT SQL;` },
+      {
+        version: MIGRATIONS.length + 1,
+        up: `CREATE TABLE half_done (id INTEGER); THIS IS NOT SQL;`,
+      },
     ];
     await expect(runMigrations(db, broken)).rejects.toBeInstanceOf(DbError);
-    expect(await version(db)).toBe(1);
+    expect(await version(db)).toBe(MIGRATIONS.length);
     expect(await tableExists(db, 'half_done')).toBe(false);
     expect(await tableExists(db, 'entries')).toBe(true);
     db.close();

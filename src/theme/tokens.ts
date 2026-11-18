@@ -31,6 +31,17 @@ export const size = {
   tabItemH: 56,
   plusButton: 56,
   icon: 24,
+  dayCellW: 48,
+  dayCellH: 68,
+  entryRowMin: 76,
+  heroHeight: 190,
+  chip: 44,
+  tile: 44,
+  tileLarge: 56,
+  closeButton: 44,
+  trendBadge: 28,
+  summaryRow: 60,
+  inputRow: 56,
 } as const;
 
 export const typography = {

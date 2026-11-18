@@ -23,6 +23,9 @@ export interface Palette {
   heroTo: string;
   onHero: string;
   onHeroMuted: string;
+  onHeroSoft: string;
+  /** Gradient behind the Log sheet, top-left to bottom-right (160deg). */
+  sheetBackdrop: readonly [string, string, string];
   shadow: string;
 }
 
@@ -48,6 +51,8 @@ export const lightPalette: Palette = {
   heroTo: '#111113',
   onHero: '#FFFFFF',
   onHeroMuted: 'rgba(255,255,255,0.65)',
+  onHeroSoft: '#C4C4CC',
+  sheetBackdrop: ['#CFE3F5', '#F3D7E5', '#FBE3D2'],
   shadow: 'rgba(20,20,30,0.06)',
 };
 
@@ -75,5 +80,7 @@ export const darkPalette: Palette = {
   heroTo: '#111113',
   onHero: '#FFFFFF',
   onHeroMuted: 'rgba(255,255,255,0.65)',
+  onHeroSoft: '#C4C4CC',
+  sheetBackdrop: ['#1F2A3A', '#2E2233', '#33271F'],
   shadow: 'rgba(0,0,0,0.4)',
 };

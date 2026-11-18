@@ -93,6 +93,17 @@ describe('add / update / remove', () => {
   });
 });
 
+describe('getById', () => {
+  it('returns the entry, or null once it is gone', async () => {
+    const { repo } = await setup();
+    const a = await repo.add(base);
+    expect(await repo.getById(a.id)).toEqual(a);
+    await repo.remove(a.id);
+    expect(await repo.getById(a.id)).toBeNull();
+    expect(await repo.getById(12345)).toBeNull();
+  });
+});
+
 describe('queries', () => {
   it('getByDateRange is inclusive on both ends and ordered by date then id', async () => {
     const { repo } = await setup();

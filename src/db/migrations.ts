@@ -24,6 +24,16 @@ export const MIGRATIONS: readonly Migration[] = [
       CREATE INDEX idx_entries_name ON entries(exercise_name COLLATE NOCASE);
     `,
   },
+  {
+    // App-level flags (e.g. "welcome screen seen"). Kept in SQLite so there is one store.
+    version: 2,
+    up: `
+      CREATE TABLE settings (
+        key   TEXT PRIMARY KEY NOT NULL,
+        value TEXT NOT NULL
+      );
+    `,
+  },
 ];
 
 function assertOrdered(migrations: readonly Migration[]): void {

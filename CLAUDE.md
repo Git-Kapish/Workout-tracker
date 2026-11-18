@@ -7,7 +7,7 @@ Personal workout tracking app: **Expo + React Native + TypeScript**, local-first
 ---
 
 ## Current status
-- Phase: **1 — Foundation**: code complete, `npm run check` green (145 tests); **awaiting the user's iPhone check** of the temporary debug screen (Phase 0's iPhone check was not reported back before Phase 1 started). Remove `app/debug.tsx`, its Today-tab link and its `Stack.Screen` once Phase 1 is signed off. (update this line at the end of every phase)
+- Phase: **2 — Logging**: code complete, `npm run check` green (185 tests); **awaiting the user's iPhone check** (Phases 0 and 1 were confirmed working on the phone). Decisions: system font (no Inter); Welcome screen built, its "seen" flag lives in SQLite (`settings` table, migration 2); adding keeps the log sheet open for the next exercise (FR-10), editing closes it. (update this line at the end of every phase)
 - Work on **one phase at a time**. Do not start the next phase until the current phase's "Done when" checks in `plan.md` pass and the user has confirmed on the iPhone.
 
 ---

@@ -5,6 +5,7 @@ import {
   parseLocalDate,
   todayLocal,
   toDateString,
+  toPickerDate,
   weekdayIndex,
 } from '@/lib/dates';
 
@@ -52,6 +53,20 @@ describe('todayLocal', () => {
   it('uses the local calendar date of the injected clock', () => {
     expect(todayLocal(new Date(2026, 10, 17, 23, 59, 59))).toBe('2026-11-17');
     expect(todayLocal(new Date(2026, 10, 18, 0, 0, 1))).toBe('2026-11-18');
+  });
+});
+
+describe('toPickerDate', () => {
+  it('round-trips through todayLocal for every day of a DST-heavy stretch', () => {
+    let d = '2026-03-01';
+    for (let i = 0; i < 400; i++) {
+      expect(todayLocal(toPickerDate(d))).toBe(d);
+      d = addDays(d, 1);
+    }
+  });
+
+  it('throws on an invalid date', () => {
+    expect(() => toPickerDate('2026-02-30')).toThrow();
   });
 });
 

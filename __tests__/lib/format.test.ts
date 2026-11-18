@@ -1,4 +1,75 @@
-import { formatNumber, formatPercent, formatVolume, formatWeight } from '@/lib/format';
+import {
+  formatDateLabel,
+  formatEntryDetail,
+  formatEntryTotals,
+  formatExerciseCount,
+  formatLongDate,
+  formatMonthDay,
+  formatNumber,
+  formatPercent,
+  formatReps,
+  formatVolume,
+  formatWeight,
+  greetingFor,
+} from '@/lib/format';
+
+describe('entry row formatting (DESIGN.md 02-today)', () => {
+  it('formats detail for weighted and bodyweight entries', () => {
+    expect(formatEntryDetail({ sets: 4, reps: 8, weightKg: 65 })).toBe('4 × 8 · 65 kg');
+    expect(formatEntryDetail({ sets: 3, reps: 10, weightKg: 42.5 })).toBe('3 × 10 · 42.5 kg');
+    expect(formatEntryDetail({ sets: 3, reps: 6, weightKg: null })).toBe('3 × 6 · bodyweight');
+  });
+
+  it('formats the right-hand totals', () => {
+    expect(formatEntryTotals({ sets: 4, reps: 8, weightKg: 65 })).toEqual({
+      reps: '32 reps',
+      volume: '2,080 kg',
+    });
+    expect(formatEntryTotals({ sets: 3, reps: 6, weightKg: null })).toEqual({
+      reps: '18 reps',
+      volume: 'no weight',
+    });
+    expect(formatEntryTotals({ sets: 3, reps: 10, weightKg: 0 }).volume).toBe('0 kg');
+  });
+
+  it('pluralises', () => {
+    expect(formatReps(1)).toBe('1 rep');
+    expect(formatReps(134)).toBe('134 reps');
+    expect(formatReps(1200)).toBe('1,200 reps');
+    expect(formatExerciseCount(0)).toBe('No exercises');
+    expect(formatExerciseCount(1)).toBe('1 exercise');
+    expect(formatExerciseCount(2)).toBe('2 exercises');
+  });
+});
+
+describe('date labels', () => {
+  it('formats month/day and long dates', () => {
+    expect(formatMonthDay('2026-11-17')).toBe('Nov 17');
+    expect(formatLongDate('2026-11-17')).toBe('Tuesday, Nov 17');
+    expect(formatLongDate('2028-02-29')).toBe('Tuesday, Feb 29');
+    expect(formatLongDate('2026-11-22')).toBe('Sunday, Nov 22');
+  });
+
+  it('labels dates relative to today', () => {
+    const today = '2026-11-17';
+    expect(formatDateLabel('2026-11-17', today)).toBe('Today, Tue Nov 17');
+    expect(formatDateLabel('2026-11-16', today)).toBe('Yesterday, Mon Nov 16');
+    expect(formatDateLabel('2026-11-18', today)).toBe('Tomorrow, Wed Nov 18');
+    expect(formatDateLabel('2026-11-14', today)).toBe('Sat, Nov 14');
+    expect(formatDateLabel('2025-12-31', today)).toBe('Wed, Dec 31, 2025');
+  });
+
+  it('chooses the greeting by local hour', () => {
+    expect(greetingFor(5)).toBe('good morning.');
+    expect(greetingFor(11)).toBe('good morning.');
+    expect(greetingFor(12)).toBe('good afternoon.');
+    expect(greetingFor(16)).toBe('good afternoon.');
+    expect(greetingFor(17)).toBe('good evening.');
+    expect(greetingFor(23)).toBe('good evening.');
+    expect(greetingFor(0)).toBe('good evening.');
+    expect(greetingFor(4)).toBe('good evening.');
+  });
+});
 
 describe('formatNumber', () => {
   it('adds thousands separators', () => {

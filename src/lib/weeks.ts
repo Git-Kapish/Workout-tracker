@@ -1,9 +1,8 @@
 import { addDays, parseLocalDate, weekdayIndex } from './dates';
+import { MONTHS_SHORT } from './labels';
 import type { DateString } from './types';
 
 // Weeks run Monday-Sunday and are identified by their Monday, never by number.
-
-const MONTHS = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
 
 export interface WeekRange {
   start: DateString;
@@ -42,7 +41,7 @@ export function lastNWeekStarts(date: DateString, n: number): DateString[] {
 function monthDay(date: DateString): string {
   const ymd = parseLocalDate(date);
   if (!ymd) throw new Error(`Invalid date string: "${date}"`);
-  return `${MONTHS[ymd.m - 1]} ${ymd.d}`;
+  return `${MONTHS_SHORT[ymd.m - 1]} ${ymd.d}`;
 }
 
 /** 'Nov 16 – Nov 22'; years are added only when the week crosses a year boundary. */
