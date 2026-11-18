@@ -1,5 +1,10 @@
 import {
+  formatCompactNumber,
   formatDateLabel,
+  formatNumericMonthDay,
+  formatOverallDetail,
+  formatOverallHeadline,
+  formatTrendWord,
   formatDayStats,
   formatDayTitle,
   formatEntryDetail,
@@ -88,6 +93,34 @@ describe('date labels', () => {
     expect(formatWeekRelative('2026-10-26', today)).toBe('3 weeks ago');
     expect(formatWeekRelative('2026-12-07', today)).toBe('In 3 weeks');
     expect(formatWeekRelative('2026-12-28', '2027-01-02')).toBe('This week'); // across New Year
+  });
+
+  it('formats chart axis dates and compact values', () => {
+    expect(formatNumericMonthDay('2026-09-28')).toBe('9/28');
+    expect(formatNumericMonthDay('2026-11-02')).toBe('11/2');
+    expect(formatCompactNumber(0)).toBe('0');
+    expect(formatCompactNumber(850)).toBe('850');
+    expect(formatCompactNumber(999)).toBe('999');
+    expect(formatCompactNumber(1000)).toBe('1.0k');
+    expect(formatCompactNumber(2640)).toBe('2.6k');
+    expect(formatCompactNumber(3355)).toBe('3.4k');
+    expect(formatCompactNumber(Number.NaN)).toBe('0');
+  });
+
+  it('describes the overall status (DESIGN.md 05-progress)', () => {
+    const up = { current: 134, previous: 107, percent: 25, trend: 'up' } as const;
+    const down = { current: 90, previous: 100, percent: -10, trend: 'down' } as const;
+    const same = { current: 50, previous: 50, percent: 0, trend: 'same' } as const;
+    const none = { current: 40, previous: 0, percent: null, trend: 'no-baseline' } as const;
+    expect(formatOverallHeadline(up)).toBe('Up 25%');
+    expect(formatOverallHeadline(down)).toBe('Down 10%');
+    expect(formatOverallHeadline(same)).toBe('Same');
+    expect(formatOverallHeadline(none)).toBe('No baseline');
+    expect(formatOverallDetail(up, 'last week')).toBe('134 reps vs 107 last week');
+    expect(formatOverallDetail(down, 'prior week')).toBe('90 reps vs 100 prior week');
+    expect(formatOverallDetail(none, 'last week')).toBe('40 reps · nothing to compare');
+    expect(formatTrendWord('up')).toBe('Up');
+    expect(formatTrendWord('no-baseline')).toBe('No baseline');
   });
 
   it('chooses the greeting by local hour', () => {

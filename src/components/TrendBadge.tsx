@@ -12,6 +12,8 @@ interface TrendBadgeProps {
   percent: number | null;
   /** Appended after the percentage, e.g. ' vs last week'. */
   suffix?: string;
+  /** The compact badge used inside stat cards. */
+  small?: boolean;
 }
 
 const ICONS: Record<Exclude<Trend, 'no-baseline'>, IconName> = {
@@ -21,7 +23,7 @@ const ICONS: Record<Exclude<Trend, 'no-baseline'>, IconName> = {
 };
 
 // Meaning is always carried by an arrow or words plus the number, never by colour alone.
-export function TrendBadge({ trend, percent, suffix = '' }: TrendBadgeProps) {
+export function TrendBadge({ trend, percent, suffix = '', small = false }: TrendBadgeProps) {
   const { colors } = useTheme();
   const palette = {
     up: { bg: colors.trendUpBg, fg: colors.trendUpFg },
@@ -35,13 +37,25 @@ export function TrendBadge({ trend, percent, suffix = '' }: TrendBadgeProps) {
   return (
     <View
       accessible
-      accessibilityLabel={`${trend === 'no-baseline' ? 'No baseline' : `${trend}, ${label}`}`}
-      style={[styles.badge, { backgroundColor: palette.bg }]}
+      accessibilityLabel={trend === 'no-baseline' ? 'No baseline' : `${trend}, ${label}`}
+      style={[small ? styles.small : styles.badge, { backgroundColor: palette.bg }]}
     >
       {trend !== 'no-baseline' ? (
-        <Icon name={ICONS[trend]} color={palette.fg} size={12} strokeWidth={2.6} />
+        <Icon
+          name={ICONS[trend]}
+          color={palette.fg}
+          size={small ? 10 : 12}
+          strokeWidth={small ? 3 : 2.6}
+        />
       ) : null}
-      <Text style={[typography.body, styles.text, { color: palette.fg }]}>{label}</Text>
+      <Text
+        style={[
+          typography.body,
+          { fontSize: small ? 12 : 13, fontWeight: '600', color: palette.fg },
+        ]}
+      >
+        {label}
+      </Text>
     </View>
   );
 }
@@ -56,5 +70,13 @@ const styles = StyleSheet.create({
     borderRadius: radius.full,
     alignSelf: 'flex-start',
   },
-  text: { fontSize: 13, fontWeight: '600' },
+  small: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 3,
+    height: 22,
+    paddingHorizontal: spacing.sm,
+    borderRadius: radius.full,
+    alignSelf: 'flex-start',
+  },
 });

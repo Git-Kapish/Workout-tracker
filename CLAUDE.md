@@ -7,7 +7,7 @@ Personal workout tracking app: **Expo + React Native + TypeScript**, local-first
 ---
 
 ## Current status
-- Phase: **3 — Week view**: code complete, `npm run check` green (206 tests); **awaiting the user's iPhone check** (Phases 0-2 confirmed working on the phone). Standing decisions: system font (no Inter); Welcome "seen" flag lives in SQLite (`settings` table, migration 2); adding keeps the log sheet open (FR-10), editing closes it; on the Week tab a past empty day says "Rest day", today/future says "Nothing logged yet". (update this line at the end of every phase)
+- Phase: **3 — Week view**: code complete, `npm run check` green (206 tests); **awaiting the user's iPhone check** (Phases 0-2 confirmed working on the phone). Standing decisions: system font (no Inter); Welcome "seen" flag lives in SQLite (`settings` table, migration 2); adding keeps the log sheet open (FR-10), editing closes it; charts are hand-drawn with plain Views (no chart library; Phase 5's line chart should use react-native-svg the same way); on the Week tab a past empty day says "Rest day", today/future says "Nothing logged yet". (update this line at the end of every phase)
 - Work on **one phase at a time**. Do not start the next phase until the current phase's "Done when" checks in `plan.md` pass and the user has confirmed on the iPhone.
 
 ---

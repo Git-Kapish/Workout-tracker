@@ -24,6 +24,10 @@ export interface Palette {
   onHero: string;
   onHeroMuted: string;
   onHeroSoft: string;
+  /** Status colours and pill background on the dark hero card. */
+  onHeroUp: string;
+  onHeroDown: string;
+  onHeroPill: string;
   /** Gradient behind the Log sheet, top-left to bottom-right (160deg). */
   sheetBackdrop: readonly [string, string, string];
   shadow: string;
@@ -52,6 +56,9 @@ export const lightPalette: Palette = {
   onHero: '#FFFFFF',
   onHeroMuted: 'rgba(255,255,255,0.65)',
   onHeroSoft: '#C4C4CC',
+  onHeroUp: '#8BE9B0',
+  onHeroDown: '#FF9B94',
+  onHeroPill: 'rgba(255,255,255,0.14)',
   sheetBackdrop: ['#CFE3F5', '#F3D7E5', '#FBE3D2'],
   shadow: 'rgba(20,20,30,0.06)',
 };
@@ -81,6 +88,9 @@ export const darkPalette: Palette = {
   onHero: '#FFFFFF',
   onHeroMuted: 'rgba(255,255,255,0.65)',
   onHeroSoft: '#C4C4CC',
+  onHeroUp: '#8BE9B0',
+  onHeroDown: '#FF9B94',
+  onHeroPill: 'rgba(255,255,255,0.14)',
   sheetBackdrop: ['#1F2A3A', '#2E2233', '#33271F'],
   shadow: 'rgba(0,0,0,0.4)',
 };

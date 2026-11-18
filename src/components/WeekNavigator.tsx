@@ -14,6 +14,8 @@ interface WeekNavigatorProps {
   onPrevious: () => void;
   onNext: () => void;
   onJumpToToday: () => void;
+  /** Put the "This week" link on its own line (for long captions). */
+  stackJump?: boolean;
 }
 
 function RoundButton({
@@ -45,9 +47,21 @@ export function WeekNavigator({
   onPrevious,
   onNext,
   onJumpToToday,
+  stackJump = false,
 }: WeekNavigatorProps) {
   const { colors } = useTheme();
   const insets = useSafeAreaInsets();
+
+  const jump = (
+    <Pressable
+      accessibilityRole="button"
+      accessibilityLabel="Back to this week"
+      hitSlop={{ top: 14, bottom: 14, left: 10, right: 10 }}
+      onPress={onJumpToToday}
+    >
+      <Text style={[styles.caption, { color: colors.accent, fontWeight: '600' }]}>This week</Text>
+    </Pressable>
+  );
 
   return (
     <View style={[styles.row, { paddingTop: insets.top + spacing.sm }]}>
@@ -58,22 +72,14 @@ export function WeekNavigator({
         </Text>
         <View style={styles.captionRow}>
           <Text style={[styles.caption, { color: colors.inkMuted }]}>{caption}</Text>
-          {isCurrentWeek ? null : (
+          {isCurrentWeek || stackJump ? null : (
             <>
               <Text style={[styles.caption, { color: colors.inkMuted }]}>·</Text>
-              <Pressable
-                accessibilityRole="button"
-                accessibilityLabel="Back to this week"
-                hitSlop={{ top: 14, bottom: 14, left: 10, right: 10 }}
-                onPress={onJumpToToday}
-              >
-                <Text style={[styles.caption, { color: colors.accent, fontWeight: '600' }]}>
-                  This week
-                </Text>
-              </Pressable>
+              {jump}
             </>
           )}
         </View>
+        {!isCurrentWeek && stackJump ? jump : null}
       </View>
       <RoundButton icon="chevronRight" label="Next week" onPress={onNext} />
     </View>

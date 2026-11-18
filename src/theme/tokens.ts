@@ -7,6 +7,8 @@ export const radius = {
   input: 16,
   tile: 14,
   historyRow: 18,
+  barTop: 8,
+  barBottom: 3,
   full: 999,
 } as const;
 

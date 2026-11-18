@@ -1,6 +1,6 @@
 import { diffDays, parseLocalDate, weekdayIndex } from './dates';
 import { MONTHS_SHORT, WEEKDAYS_LONG, WEEKDAYS_SHORT } from './labels';
-import type { DateString, Entry, Summary } from './types';
+import type { DateString, Entry, MetricComparison, Summary, Trend } from './types';
 import { weekStart } from './weeks';
 
 // Display formatting. Hand-rolled (not toLocaleString) so output is identical on every
@@ -129,6 +129,45 @@ export function formatWeekRelative(week: DateString, today: DateString): string 
   if (weeks === -1) return 'Last week';
   if (weeks === 1) return 'Next week';
   return weeks < 0 ? `${-weeks} weeks ago` : `In ${weeks} weeks`;
+}
+
+/** '11/16' (chart axis). */
+export function formatNumericMonthDay(date: DateString): string {
+  const { m, d } = parts(date);
+  return `${m}/${d}`;
+}
+
+/** Chart value labels: '850', '1.2k', '3.4k'. Whole numbers below 1,000. */
+export function formatCompactNumber(n: number): string {
+  if (!Number.isFinite(n) || n <= 0) return '0';
+  if (n < 1000) return formatNumber(n);
+  return `${(Math.round(n / 100) / 10).toFixed(1)}k`;
+}
+
+const TREND_WORDS: Record<Trend, string> = {
+  up: 'Up',
+  down: 'Down',
+  same: 'Same',
+  'no-baseline': 'No baseline',
+};
+
+/** 'Up' | 'Down' | 'Same' | 'No baseline' */
+export function formatTrendWord(trend: Trend): string {
+  return TREND_WORDS[trend];
+}
+
+/** 'Up 25%', 'Down 12%', 'Same', 'No baseline'. The sign is carried by the word. */
+export function formatOverallHeadline(c: MetricComparison): string {
+  if (c.trend === 'up' || c.trend === 'down') {
+    return `${TREND_WORDS[c.trend]} ${Math.abs(c.percent ?? 0)}%`;
+  }
+  return TREND_WORDS[c.trend];
+}
+
+/** '134 reps vs 107 last week', or '134 reps · nothing to compare' without a baseline. */
+export function formatOverallDetail(c: MetricComparison, previousLabel: string): string {
+  if (c.trend === 'no-baseline') return `${formatReps(c.current)} · nothing to compare`;
+  return `${formatReps(c.current)} vs ${formatNumber(c.previous, 0)} ${previousLabel}`;
 }
 
 /** Screen-title greeting for a local hour 0-23. */
