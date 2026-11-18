@@ -17,17 +17,9 @@ interface ScreenHeaderProps {
   right?: ReactNode;
   /** Opens the calendar when the date pill is tapped. */
   onDatePress?: () => void;
-  /** Hidden developer gesture; pass undefined in release builds. */
-  onTitleLongPress?: () => void;
 }
 
-export function ScreenHeader({
-  datePill,
-  title,
-  right,
-  onDatePress,
-  onTitleLongPress,
-}: ScreenHeaderProps) {
+export function ScreenHeader({ datePill, title, right, onDatePress }: ScreenHeaderProps) {
   const { colors } = useTheme();
   const insets = useSafeAreaInsets();
 
@@ -49,7 +41,6 @@ export function ScreenHeader({
       {/* Shrinks to fit when the right-hand buttons and a large text size leave little room. */}
       <Text
         accessibilityRole="header"
-        onLongPress={onTitleLongPress}
         numberOfLines={1}
         adjustsFontSizeToFit
         minimumFontScale={0.8}

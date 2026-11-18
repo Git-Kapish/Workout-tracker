@@ -49,12 +49,11 @@ export default function TodayScreen() {
         onDatePress={() => setCalendarOpen(true)}
         title={greetingFor(now.getHours())}
         right={<HeaderActions />}
-        onTitleLongPress={__DEV__ ? () => router.push('/debug') : undefined}
       />
       <View style={styles.strip}>
         <DayStrip days={week.days} today={today} selected={selected} onSelect={setSelected} />
       </View>
-      <View style={styles.hero}>
+      <Enter style={styles.hero}>
         <HeroCard
           eyebrow={formatLongDate(selected)}
           title={
@@ -73,7 +72,7 @@ export default function TodayScreen() {
             style={styles.heroButton}
           />
         </HeroCard>
-      </View>
+      </Enter>
       <Text style={[typography.eyebrow, styles.eyebrow, { color: colors.inkMuted }]}>
         {isToday ? "TODAY'S LOG" : `${formatMonthDay(selected).toUpperCase()} LOG`}
       </Text>

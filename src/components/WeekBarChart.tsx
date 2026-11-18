@@ -1,5 +1,7 @@
 import { StyleSheet, Text, View } from 'react-native';
 
+import { GrowBar } from './GrowBar';
+
 import { formatNumber } from '@/lib/format';
 import type { ChartBar, ChartMetric } from '@/lib/progress';
 import { radius, spacing, typography, useTheme } from '@/theme';
@@ -29,7 +31,7 @@ export function WeekBarChart({ bars, metric }: WeekBarChartProps) {
       style={styles.chart}
       accessibilityLabel={`Bar chart of ${unit} for the last ${bars.length} weeks`}
     >
-      {bars.map((bar) => {
+      {bars.map((bar, index) => {
         const height =
           bar.value === 0 ? STUB_BAR : Math.max(MIN_BAR, Math.round(bar.ratio * MAX_BAR));
         return (
@@ -51,7 +53,10 @@ export function WeekBarChart({ bars, metric }: WeekBarChartProps) {
             >
               {bar.valueLabel}
             </Text>
-            <View
+            {/* Keyed by metric so switching Reps/Volume grows the bars in again. */}
+            <GrowBar
+              key={metric}
+              index={index}
               style={[
                 styles.bar,
                 { height, backgroundColor: bar.isSelected ? colors.ink : colors.barPast },

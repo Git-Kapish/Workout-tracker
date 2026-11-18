@@ -2,6 +2,7 @@ import { act, fireEvent, render, screen } from '@testing-library/react-native';
 import { AccessibilityInfo, StyleSheet, Text } from 'react-native';
 
 import { Enter } from '@/components/Enter';
+import { GrowBar } from '@/components/GrowBar';
 import { PressableScale } from '@/components/PressableScale';
 
 beforeEach(() => {
@@ -98,5 +99,24 @@ describe('Enter', () => {
     );
     await act(async () => undefined);
     expect(screen.getByText('row')).toBeOnTheScreen();
+  });
+});
+
+describe('GrowBar', () => {
+  it('scales from its baseline using transform only, never from zero', async () => {
+    await render(<GrowBar testID="bar" index={3} style={{ height: 40, width: 22 }} />);
+    const style = StyleSheet.flatten(screen.getByTestId('bar').props.style);
+    expect(style.height).toBe(40);
+    expect(style.transformOrigin).toBe('bottom');
+    expect(Object.keys(style).sort()).toEqual(['height', 'transform', 'transformOrigin', 'width']);
+    expect(style.transform).toHaveLength(1);
+    expect(Object.keys(style.transform[0])).toEqual(['scaleY']);
+  });
+
+  it('still renders when Reduce Motion is on', async () => {
+    jest.spyOn(AccessibilityInfo, 'isReduceMotionEnabled').mockResolvedValue(true);
+    await render(<GrowBar testID="bar" index={0} style={{ height: 10 }} />);
+    await act(async () => undefined);
+    expect(screen.getByTestId('bar')).toBeOnTheScreen();
   });
 });

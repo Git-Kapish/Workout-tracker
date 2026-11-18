@@ -3,6 +3,7 @@ import { useState } from 'react';
 import { ScrollView, StyleSheet, Text, View } from 'react-native';
 
 import { EmptyState } from '@/components/EmptyState';
+import { Enter } from '@/components/Enter';
 import { LoadingState } from '@/components/LoadingState';
 import { OverallCard } from '@/components/OverallCard';
 import { SegmentedToggle } from '@/components/SegmentedToggle';
@@ -101,9 +102,11 @@ export default function ProgressScreen() {
           />
         ) : (
           <>
-            <OverallCard comparison={comparison.reps} previousLabel={previousLabel} />
+            <Enter index={0}>
+              <OverallCard comparison={comparison.reps} previousLabel={previousLabel} />
+            </Enter>
 
-            <View style={styles.grid}>
+            <Enter index={1} style={styles.grid}>
               {[cards.slice(0, 2), cards.slice(2)].map((row) => (
                 <View key={row[0]?.label} style={styles.gridRow}>
                   {row.map((card) => (
@@ -118,9 +121,9 @@ export default function ProgressScreen() {
                   ))}
                 </View>
               ))}
-            </View>
+            </Enter>
 
-            <View style={[styles.chartCard, { backgroundColor: colors.surface }]}>
+            <Enter index={2} style={[styles.chartCard, { backgroundColor: colors.surface }]}>
               <View style={styles.chartHeader}>
                 <Text
                   accessibilityRole="header"
@@ -133,7 +136,7 @@ export default function ProgressScreen() {
               <View style={styles.chart}>
                 <WeekBarChart bars={chartBars(progress.series, metric)} metric={metric} />
               </View>
-            </View>
+            </Enter>
           </>
         )}
       </ScrollView>

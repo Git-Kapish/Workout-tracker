@@ -4,6 +4,7 @@ import { FlatList, StyleSheet, Text, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { EmptyState } from '@/components/EmptyState';
+import { Enter } from '@/components/Enter';
 import { ExerciseRow } from '@/components/ExerciseRow';
 import { LoadingState } from '@/components/LoadingState';
 import { SearchField } from '@/components/SearchField';
@@ -58,8 +59,8 @@ export default function ExercisesScreen() {
       keyExtractor={(item) => item.name.toLowerCase()}
       ItemSeparatorComponent={Separator}
       ListHeaderComponent={header}
-      renderItem={({ item }) => (
-        <View style={styles.row}>
+      renderItem={({ item, index }) => (
+        <Enter index={index} style={styles.row}>
           <ExerciseRow
             exercise={item}
             today={today}
@@ -70,7 +71,7 @@ export default function ExercisesScreen() {
               })
             }
           />
-        </View>
+        </Enter>
       )}
       ListEmptyComponent={
         loading ? (
