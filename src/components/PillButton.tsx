@@ -5,7 +5,7 @@ import { radius, size, spacing, typography, useTheme } from '@/theme';
 interface PillButtonProps {
   label: string;
   onPress: () => void;
-  /** primary: black on light. inverse: white on the dark hero card. secondary: grey field. */
+  /** primary: black on light. inverse: white with dark text, for the always-dark hero card (the dark label is the hero's own colour, so it stays readable in dark mode). secondary: grey field. */
   variant?: 'primary' | 'inverse' | 'secondary';
   disabled?: boolean;
   /** Shorter pill used inside cards. */
@@ -27,7 +27,7 @@ export function PillButton({
   const background = { primary: colors.ink, inverse: colors.onHero, secondary: colors.fieldBg }[
     variant
   ];
-  const foreground = { primary: colors.surface, inverse: colors.ink, secondary: colors.ink }[
+  const foreground = { primary: colors.surface, inverse: colors.heroTo, secondary: colors.ink }[
     variant
   ];
 

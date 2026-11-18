@@ -8,17 +8,24 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { PillButton } from '@/components/PillButton';
 import { GradientWord, WelcomeArt } from '@/components/WelcomeArt';
 import { useWelcome } from '@/hooks/useWelcome';
-import { spacing, typography } from '@/theme';
-import { lightPalette } from '@/theme/colors';
+import { ForceLightTheme, spacing, typography, useTheme } from '@/theme';
 import { welcome } from '@/theme/welcome';
 
 // First-launch splash (DESIGN.md screen 1). There is no sign-in because the app has no
 // accounts. Always light: the design is a fixed pastel scene.
 export default function WelcomeScreen() {
+  return (
+    <ForceLightTheme>
+      <Welcome />
+    </ForceLightTheme>
+  );
+}
+
+function Welcome() {
   const insets = useSafeAreaInsets();
   const { markSeen } = useWelcome();
   const [busy, setBusy] = useState(false);
-  const colors = lightPalette;
+  const { colors } = useTheme();
 
   const getStarted = async () => {
     if (busy) return;

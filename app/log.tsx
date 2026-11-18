@@ -14,6 +14,11 @@ import { formatExerciseCount, formatMonthDay, formatWeekdayLong } from '@/lib/fo
 import type { DateString, Entry } from '@/lib/types';
 import { radius, spacing, typography, useTheme } from '@/theme';
 
+// Height reserved at the top for the weekday / date / count. The sheet starts below it and is
+// capped to the rest, so a tall sheet (the Edit form has a Delete button, large text grows it)
+// can never cover the date.
+const HEADER_ZONE = 150;
+
 /**
  * Add / edit sheet (DESIGN.md screen 3). `/log` adds, `/log?id=12` edits, and `/log?date=…`
  * adds on a given day.
@@ -91,36 +96,41 @@ function LogSheet({
         end={{ x: 0.7, y: 1 }}
         style={StyleSheet.absoluteFill}
       />
-      <View style={styles.backdropText} pointerEvents="none">
+      <View testID="log-header" style={styles.backdropText} pointerEvents="none">
         <Text style={[typography.eyebrow, { color: colors.inkSoft }]}>
           {formatWeekdayLong(date).toUpperCase()}
         </Text>
-        <Text style={[typography.display, { color: colors.ink }]}>{formatMonthDay(date)}</Text>
+        <Text maxFontSizeMultiplier={1.2} style={[typography.display, { color: colors.ink }]}>
+          {formatMonthDay(date)}
+        </Text>
         <Text style={[typography.body, { color: colors.inkSoft, fontWeight: '400' }]}>
           {day.data ? `${formatExerciseCount(count)} logged${date === today ? ' today' : ''}` : ' '}
         </Text>
       </View>
 
-      <KeyboardAvoidingView
-        behavior={Platform.OS === 'ios' ? 'padding' : undefined}
-        style={styles.sheetWrap}
-      >
-        <View
-          style={[styles.sheet, { backgroundColor: colors.surface, shadowColor: colors.shadow }]}
+      <View testID="log-sheet-zone" style={styles.sheetZone}>
+        <KeyboardAvoidingView
+          behavior={Platform.OS === 'ios' ? 'padding' : undefined}
+          style={styles.sheetWrap}
         >
-          <ScrollView
-            keyboardShouldPersistTaps="handled"
-            keyboardDismissMode="on-drag"
-            showsVerticalScrollIndicator={false}
-            contentContainerStyle={[
-              styles.sheetContent,
-              { paddingBottom: insets.bottom + spacing.xl },
-            ]}
+          <View
+            testID="log-sheet"
+            style={[styles.sheet, { backgroundColor: colors.surface, shadowColor: colors.shadow }]}
           >
-            <EntryForm form={form} today={today} onClose={onClose} />
-          </ScrollView>
-        </View>
-      </KeyboardAvoidingView>
+            <ScrollView
+              keyboardShouldPersistTaps="handled"
+              keyboardDismissMode="on-drag"
+              showsVerticalScrollIndicator={false}
+              contentContainerStyle={[
+                styles.sheetContent,
+                { paddingBottom: insets.bottom + spacing.xl },
+              ]}
+            >
+              <EntryForm form={form} today={today} onClose={onClose} />
+            </ScrollView>
+          </View>
+        </KeyboardAvoidingView>
+      </View>
     </View>
   );
 }
@@ -133,14 +143,15 @@ const styles = StyleSheet.create({
     top: 0,
     left: 0,
     right: 0,
-    height: 236,
+    height: HEADER_ZONE,
     alignItems: 'center',
     justifyContent: 'center',
     gap: spacing.xs,
   },
+  sheetZone: { flex: 1, paddingTop: HEADER_ZONE },
   sheetWrap: { flex: 1, justifyContent: 'flex-end' },
   sheet: {
-    maxHeight: '86%',
+    maxHeight: '100%',
     borderTopLeftRadius: radius.sheet,
     borderTopRightRadius: radius.sheet,
     shadowOffset: { width: 0, height: -10 },
