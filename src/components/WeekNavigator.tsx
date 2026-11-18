@@ -44,7 +44,7 @@ export function WeekNavigator({
   );
 
   return (
-    <View style={[styles.row, { paddingTop: insets.top + spacing.sm }]}>
+    <View testID="week-navigator-row" style={[styles.row, { paddingTop: insets.top + spacing.sm }]}>
       <RoundButton icon="chevronLeft" label="Previous week" onPress={onPrevious} />
       <View style={styles.center}>
         <Text accessibilityRole="header" style={[typography.screenTitle, { color: colors.ink }]}>
@@ -59,7 +59,12 @@ export function WeekNavigator({
             </>
           )}
         </View>
-        {!isCurrentWeek && stackJump ? jump : null}
+        {/* The stacked link's line is always reserved, so nothing below or beside it moves. */}
+        {stackJump ? (
+          <View testID="jump-slot" style={styles.jumpSlot}>
+            {isCurrentWeek ? null : jump}
+          </View>
+        ) : null}
       </View>
       <RoundButton icon="chevronRight" label="Next week" onPress={onNext} />
     </View>
@@ -69,11 +74,13 @@ export function WeekNavigator({
 const styles = StyleSheet.create({
   row: {
     flexDirection: 'row',
-    alignItems: 'center',
+    // Top-aligned, not centred: the buttons stay put however tall the title block gets.
+    alignItems: 'flex-start',
     justifyContent: 'space-between',
     paddingHorizontal: spacing.screenX,
   },
   center: { alignItems: 'center', gap: 2, flexShrink: 1 },
   captionRow: { flexDirection: 'row', alignItems: 'center', gap: spacing.xs + 2 },
   caption: { fontSize: 13 },
+  jumpSlot: { minHeight: 20, justifyContent: 'center' },
 });

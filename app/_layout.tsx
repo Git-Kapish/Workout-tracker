@@ -3,6 +3,7 @@ import { StatusBar } from 'expo-status-bar';
 import { useEffect } from 'react';
 import { View } from 'react-native';
 
+import { EdgeSwipeBack } from '@/components/EdgeSwipeBack';
 import { ErrorFallback } from '@/components/ErrorFallback';
 import { LoadingState } from '@/components/LoadingState';
 import { DatabaseProvider } from '@/hooks/DatabaseProvider';
@@ -39,12 +40,15 @@ export default function RootLayout() {
       )}
     >
       <StatusBar style="auto" />
-      <Stack screenOptions={{ headerShown: false, contentStyle: { backgroundColor: colors.bg } }}>
-        <Stack.Screen name="(tabs)" />
-        <Stack.Screen name="welcome" options={{ gestureEnabled: false }} />
-        <Stack.Screen name="log" options={{ presentation: 'modal' }} />
-        <Stack.Screen name="settings" options={{ presentation: 'modal' }} />
-      </Stack>
+      <View style={{ flex: 1 }}>
+        <Stack screenOptions={{ headerShown: false, contentStyle: { backgroundColor: colors.bg } }}>
+          <Stack.Screen name="(tabs)" />
+          <Stack.Screen name="welcome" options={{ gestureEnabled: false }} />
+          <Stack.Screen name="log" options={{ presentation: 'modal' }} />
+          <Stack.Screen name="settings" options={{ presentation: 'modal' }} />
+        </Stack>
+        <EdgeSwipeBack />
+      </View>
     </DatabaseProvider>
   );
 }

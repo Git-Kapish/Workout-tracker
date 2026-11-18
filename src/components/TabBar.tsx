@@ -1,12 +1,16 @@
 import { router } from 'expo-router';
 import type { BottomTabBarProps } from 'expo-router/js-tabs';
-import { Pressable, StyleSheet, Text, View } from 'react-native';
+import { useEffect, useRef, useState } from 'react';
+import { Animated, PanResponder, StyleSheet, Text, View } from 'react-native';
 
+import { useReduceMotion } from '@/hooks/useReduceMotion';
 import { tabBarBottomOffset } from '@/hooks/useTabBarClearance';
+import { highlightPosition, nearestTab, type TabBox } from '@/lib/tabScrub';
 import { floatingBar, radius, size, spacing, typography, useTheme } from '@/theme';
 
 import { GlassSurface } from './GlassSurface';
 import { Icon, type IconName } from './Icon';
+import { PressableScale } from './PressableScale';
 
 const TAB_ICONS: Record<string, IconName> = {
   index: 'home',
@@ -24,75 +28,168 @@ export function activeTabName(routeName: string): string {
   return PARENT_TAB[routeName] ?? routeName;
 }
 
+interface ItemBox {
+  x: number;
+  y: number;
+  width: number;
+  height: number;
+}
+
 /**
  * A floating liquid-glass capsule over the content (the router lays the bar out as an
  * absolutely positioned overlay, so screens run underneath it and pad their lists with
  * useTabBarClearance). The centre "+" is not a tab: it opens the log modal.
+ *
+ * Like the iOS tab bar, a finger can slide along it: the highlight follows the finger and the
+ * tab under it opens on release. The highlight is one view that springs between items.
  */
 export function TabBar({ state, descriptors, emitter, navigateToTab, insets }: BottomTabBarProps) {
   const { colors } = useTheme();
+  const reduceMotion = useReduceMotion();
   const focusedName = state.routes[state.index]?.name ?? '';
+  const selectedName = activeTabName(focusedName);
 
-  const items = state.routes.flatMap((route) => {
-    if (!(route.name in TAB_ICONS)) return []; // hidden route: no bar item
+  const boxes = useRef<Record<string, ItemBox>>({});
+  // Every item is the same size, so the first item's box sizes the highlight.
+  const [first, setFirst] = useState<ItemBox | null>(null);
+  const measured = first !== null;
+  const [scrubbing, setScrubbing] = useState<string | null>(null);
+  const [highlightX] = useState(() => new Animated.Value(0));
+  const dragging = useRef(false);
+
+  const tabRoutes = state.routes.filter((route) => route.name in TAB_ICONS);
+
+  const open = (routeName: string) => {
+    const route = tabRoutes.find((r) => r.name === routeName);
+    if (!route) return;
+    const event = emitter.emit({ type: 'tabPress', target: route.key, canPreventDefault: true });
+    // Compare with the real focused route: on a detail screen the highlighted item must
+    // still navigate back to its list.
+    if (focusedName !== route.name && !event.defaultPrevented) navigateToTab(route.key);
+  };
+
+  // Gesture callbacks outlive renders, so they read the latest values through a ref.
+  const latest = useRef({ open, tabRoutes, selectedName });
+  useEffect(() => {
+    latest.current = { open, tabRoutes, selectedName };
+  });
+
+  const tabBoxes = (): TabBox[] =>
+    latest.current.tabRoutes.flatMap((route) => {
+      const box = boxes.current[route.name];
+      return box ? [{ name: route.name, x: box.x, width: box.width }] : [];
+    });
+  const nearest = (xInCapsule: number) => nearestTab(tabBoxes(), xInCapsule);
+
+  const moveHighlight = (name: string, animated: boolean) => {
+    const box = boxes.current[name];
+    if (!box) return;
+    if (!animated || reduceMotion) {
+      highlightX.setValue(box.x);
+      return;
+    }
+    Animated.spring(highlightX, {
+      toValue: box.x,
+      speed: 20,
+      bounciness: 5,
+      useNativeDriver: true,
+    }).start();
+  };
+
+  // Follows the selected tab however it changed (tap, scrub, or navigation from elsewhere).
+  useEffect(() => {
+    if (measured && !dragging.current) moveHighlight(selectedName, true);
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- moveHighlight only reads refs
+  }, [selectedName, measured]);
+
+  // The refs below are only read inside gesture callbacks, which run after render.
+  // eslint-disable-next-line react-hooks/refs
+  const [pan] = useState(() =>
+    PanResponder.create({
+      // Only claim a mostly-horizontal drag, so plain taps still reach the buttons.
+      onMoveShouldSetPanResponder: (_, g) =>
+        Math.abs(g.dx) > 8 && Math.abs(g.dx) > Math.abs(g.dy) * 1.5,
+      onPanResponderGrant: () => {
+        dragging.current = true;
+      },
+      onPanResponderMove: (_, g) => {
+        const x = g.moveX - floatingBar.sideMargin;
+        const position = highlightPosition(tabBoxes(), x);
+        const target = nearest(x);
+        if (position === null || !target) return;
+        highlightX.setValue(position);
+        setScrubbing((current) => (current === target ? current : target));
+      },
+      onPanResponderRelease: (_, g) => {
+        dragging.current = false;
+        const target = nearest(g.moveX - floatingBar.sideMargin);
+        setScrubbing(null);
+        if (target) {
+          moveHighlight(target, true);
+          latest.current.open(target);
+        }
+      },
+      onPanResponderTerminate: () => {
+        dragging.current = false;
+        setScrubbing(null);
+        moveHighlight(latest.current.selectedName, true);
+      },
+    }),
+  );
+
+  const items = tabRoutes.map((route) => {
     const { options } = descriptors[route.key];
     const label = typeof options.title === 'string' ? options.title : route.name;
-    const selected = activeTabName(focusedName) === route.name;
-    const tint = selected ? colors.ink : colors.inkMuted;
+    const selected = selectedName === route.name;
+    // While sliding a finger across, the tint follows it before the tab has opened.
+    const lit = (scrubbing ?? selectedName) === route.name;
+    const tint = lit ? colors.ink : colors.inkMuted;
 
-    const onPress = () => {
-      const event = emitter.emit({ type: 'tabPress', target: route.key, canPreventDefault: true });
-      // Compare with the real focused route: on a detail screen the highlighted item must
-      // still navigate back to its list.
-      if (focusedName !== route.name && !event.defaultPrevented) navigateToTab(route.key);
-    };
-
-    return [
-      <Pressable
+    return (
+      <PressableScale
         key={route.key}
+        scaleTo={0.92}
         accessibilityRole="tab"
         accessibilityLabel={label}
         accessibilityState={{ selected }}
-        onPress={onPress}
-        // Feedback on press-in, no transition: instant and never in the way of a tap.
-        style={({ pressed }) => [
-          styles.item,
-          selected && { backgroundColor: colors.fieldBg },
-          pressed && styles.pressed,
-        ]}
+        onPress={() => open(route.name)}
+        onLayout={(event) => {
+          boxes.current[route.name] = event.nativeEvent.layout;
+          if (route.name === selectedName && !measured) {
+            highlightX.setValue(event.nativeEvent.layout.x);
+          }
+          if (!measured || route.name === tabRoutes[0]?.name) setFirst(event.nativeEvent.layout);
+        }}
+        style={styles.item}
       >
         <Icon name={TAB_ICONS[route.name] ?? 'home'} color={tint} />
         <Text
           maxFontSizeMultiplier={1.2}
-          style={[typography.tabLabel, { color: tint, fontWeight: selected ? '600' : '500' }]}
+          style={[typography.tabLabel, { color: tint, fontWeight: lit ? '600' : '500' }]}
           numberOfLines={1}
         >
           {label}
         </Text>
-      </Pressable>,
-    ];
+      </PressableScale>
+    );
   });
 
   const plus = (
-    <Pressable
+    <PressableScale
       key="plus"
+      scaleTo={0.9}
       accessibilityRole="button"
       accessibilityLabel="Log exercise"
       onPress={() => router.push('/log')}
-      style={({ pressed }) => [
-        styles.plus,
-        { backgroundColor: colors.ink },
-        pressed && styles.pressed,
-      ]}
+      style={[styles.plus, { backgroundColor: colors.ink }]}
     >
       <Icon name="plus" color={colors.surface} />
-    </Pressable>
+    </PressableScale>
   );
 
   return (
     <View
       testID="tab-bar"
-      pointerEvents="box-none"
       style={[
         styles.wrap,
         {
@@ -101,8 +198,25 @@ export function TabBar({ state, descriptors, emitter, navigateToTab, insets }: B
           right: floatingBar.sideMargin,
         },
       ]}
+      {...pan.panHandlers}
     >
       <GlassSurface style={styles.capsule}>
+        {measured && first ? (
+          <Animated.View
+            testID="tab-highlight"
+            pointerEvents="none"
+            style={[
+              styles.highlight,
+              {
+                top: first.y,
+                width: first.width,
+                height: first.height,
+                backgroundColor: colors.fieldBg,
+                transform: [{ translateX: highlightX }],
+              },
+            ]}
+          />
+        ) : null}
         {[...items.slice(0, 2), plus, ...items.slice(2)]}
       </GlassSurface>
     </View>
@@ -119,6 +233,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: spacing.sm,
     borderRadius: radius.full,
   },
+  highlight: { position: 'absolute', left: 0, borderRadius: radius.full },
   item: {
     flex: 1,
     minHeight: size.tabItemH - 4,
@@ -135,5 +250,4 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
   },
-  pressed: { transform: [{ scale: 0.96 }] },
 });

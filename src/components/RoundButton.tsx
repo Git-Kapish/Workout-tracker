@@ -1,9 +1,10 @@
-import { Pressable, StyleSheet } from 'react-native';
+import { StyleSheet } from 'react-native';
 
 import { radius, size, useTheme } from '@/theme';
 
 import { GlassSurface } from './GlassSurface';
 import { Icon, type IconName } from './Icon';
+import { PressableScale } from './PressableScale';
 
 interface RoundButtonProps {
   icon: IconName;
@@ -25,19 +26,19 @@ export function RoundButton({
 }: RoundButtonProps) {
   const { colors } = useTheme();
   return (
-    <Pressable
+    <PressableScale
       accessibilityRole="button"
       accessibilityLabel={label}
       accessibilityState={{ disabled, busy }}
       disabled={disabled}
       onPress={onPress}
-      // Feedback lands on press-in: instant, no transition to wait for.
-      style={({ pressed }) => [styles.hit, pressed && styles.pressed, busy && styles.busy]}
+      scaleTo={0.9}
+      style={[styles.hit, busy && styles.busy]}
     >
       <GlassSurface interactive style={styles.glass}>
         <Icon name={icon} color={colors.ink} size={20} strokeWidth={2} />
       </GlassSurface>
-    </Pressable>
+    </PressableScale>
   );
 }
 
@@ -50,6 +51,5 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
   },
-  pressed: { transform: [{ scale: 0.95 }] },
   busy: { opacity: 0.5 },
 });

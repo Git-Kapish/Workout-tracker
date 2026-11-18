@@ -10,7 +10,8 @@ import {
 } from 'react-native';
 
 import { WeekNavigator } from '@/components/WeekNavigator';
-import { WeekPage } from '@/components/WeekPage';
+import { WeekDetail } from '@/components/WeekDetail';
+import { WeekStripPage } from '@/components/WeekStripPage';
 import { useTabBarClearance } from '@/hooks/useTabBarClearance';
 import { useToday } from '@/hooks/useNow';
 import { weekdayIndex } from '@/lib/dates';
@@ -24,13 +25,13 @@ import {
   weekStartForPage,
 } from '@/lib/weekPager';
 import { formatWeekLabel, weekStart } from '@/lib/weeks';
-import { useTheme } from '@/theme';
+import { size, spacing, useTheme } from '@/theme';
 
 /**
- * Week tab: a horizontal pager with one page per week. Swipe to move between weeks (native
- * paging: momentum, snapping and rubber-banding at the ends, with the neighbouring week
- * sliding in under your finger), or use the arrows. Moving a week keeps the weekday
- * (Tuesday -> next Tuesday).
+ * Week tab: the row of days is a horizontal pager with one page per week. Swipe that row to move
+ * between weeks (native paging: momentum, snapping, rubber-banding, the neighbouring week
+ * sliding in under your finger), or use the arrows. The entries and totals below stay in place
+ * and follow the week. Moving a week keeps the weekday (Tuesday -> next Tuesday).
  */
 export default function WeekScreen() {
   const { colors } = useTheme();
@@ -41,7 +42,7 @@ export default function WeekScreen() {
   const todayPage = pageForDate(anchor, today);
   const [page, setPage] = useState(todayPage);
   const [weekday, setWeekday] = useState(() => weekdayIndex(today));
-  const [box, setBox] = useState<{ width: number; height: number } | null>(null);
+  const [width, setWidth] = useState<number | null>(null);
   const listRef = useRef<FlatList<number>>(null);
 
   const start = weekStartForPage(anchor, page);
@@ -56,18 +57,16 @@ export default function WeekScreen() {
   // the next week, so the header label follows the finger without re-rendering every frame.
   const onScroll = useCallback(
     (event: NativeSyntheticEvent<NativeScrollEvent>) => {
-      if (!box) return;
-      const next = pageFromOffset(event.nativeEvent.contentOffset.x, box.width);
+      if (!width) return;
+      const next = pageFromOffset(event.nativeEvent.contentOffset.x, width);
       setPage((current) => (current === next ? current : next));
     },
-    [box],
+    [width],
   );
 
   const onLayout = useCallback((event: LayoutChangeEvent) => {
-    const { width, height } = event.nativeEvent.layout;
-    setBox((current) =>
-      current && current.width === width && current.height === height ? current : { width, height },
-    );
+    const next = event.nativeEvent.layout.width;
+    setWidth((current) => (current === next ? current : next));
   }, []);
 
   const jumpToToday = () => {
@@ -86,17 +85,18 @@ export default function WeekScreen() {
         onJumpToToday={jumpToToday}
       />
 
+      {/* Only this row scrolls sideways; what is under it stays put. */}
       <View testID="week-pager-box" style={styles.pager} onLayout={onLayout}>
-        {box ? (
+        {width ? (
           <FlatList
             ref={listRef}
             testID="week-pager"
             horizontal
             pagingEnabled
             data={PAGER_PAGES}
-            extraData={`${weekday}|${today}|${box.height}|${bottomInset}`}
+            extraData={`${weekday}|${today}`}
             keyExtractor={(index) => String(index)}
-            getItemLayout={(_, index) => ({ length: box.width, offset: box.width * index, index })}
+            getItemLayout={(_, index) => ({ length: width, offset: width * index, index })}
             initialScrollIndex={todayPage}
             initialNumToRender={1}
             windowSize={3}
@@ -106,26 +106,32 @@ export default function WeekScreen() {
             scrollEventThrottle={16}
             onScroll={onScroll}
             renderItem={({ item }) => (
-              <WeekPage
+              <WeekStripPage
                 weekStartDate={weekStartForPage(anchor, item)}
                 weekday={weekday}
                 today={today}
-                width={box.width}
-                height={box.height}
-                bottomInset={bottomInset}
+                width={width}
                 onSelectWeekday={setWeekday}
-                onOpenEntry={(id) => router.push(`/log?id=${id}`)}
-                onLogOnDay={(date) => router.push(`/log?date=${date}`)}
               />
             )}
           />
         ) : null}
       </View>
+
+      <WeekDetail
+        weekStartDate={start}
+        weekday={weekday}
+        today={today}
+        bottomInset={bottomInset}
+        onOpenEntry={(id) => router.push(`/log?id=${id}`)}
+        onLogOnDay={(date) => router.push(`/log?date=${date}`)}
+      />
     </View>
   );
 }
 
 const styles = StyleSheet.create({
   root: { flex: 1 },
-  pager: { flex: 1 },
+  // A horizontal list has no height of its own, so the row's height is given here.
+  pager: { height: size.dayCellH, marginTop: spacing.lg },
 });

@@ -14,6 +14,8 @@ export default function TabsLayout() {
   return (
     <Tabs
       tabBar={(props) => <TabBar {...props} />}
+      // Back (button or edge swipe) returns to the tab you came from, not always to Today.
+      backBehavior="history"
       screenOptions={{ headerShown: false, sceneStyle: { backgroundColor: colors.bg } }}
     >
       <Tabs.Screen name="index" options={{ title: 'Today' }} />

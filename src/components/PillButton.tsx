@@ -1,6 +1,8 @@
-import { Pressable, StyleSheet, Text, type StyleProp, type ViewStyle } from 'react-native';
+import { StyleSheet, Text, type StyleProp, type ViewStyle } from 'react-native';
 
 import { radius, size, spacing, typography, useTheme } from '@/theme';
+
+import { PressableScale } from './PressableScale';
 
 interface PillButtonProps {
   label: string;
@@ -32,7 +34,7 @@ export function PillButton({
   ];
 
   return (
-    <Pressable
+    <PressableScale
       accessibilityRole="button"
       accessibilityLabel={accessibilityLabel ?? label}
       accessibilityState={{ disabled }}
@@ -46,7 +48,7 @@ export function PillButton({
       ]}
     >
       <Text style={[typography.rowTitle, { color: foreground }]}>{label}</Text>
-    </Pressable>
+    </PressableScale>
   );
 }
 

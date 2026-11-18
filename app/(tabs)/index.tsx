@@ -1,7 +1,10 @@
 import { router } from 'expo-router';
+import { useState } from 'react';
 import { FlatList, StyleSheet, Text, View } from 'react-native';
 
+import { CalendarSheet } from '@/components/CalendarSheet';
 import { DayStrip } from '@/components/DayStrip';
+import { Enter } from '@/components/Enter';
 import { EmptyState } from '@/components/EmptyState';
 import { HeaderActions } from '@/components/HeaderActions';
 import { EntryRow } from '@/components/EntryRow';
@@ -13,7 +16,8 @@ import { TrendBadge } from '@/components/TrendBadge';
 import { useNow } from '@/hooks/useNow';
 import { useTabBarClearance } from '@/hooks/useTabBarClearance';
 import { useTodayData } from '@/hooks/useTodayData';
-import { todayLocal } from '@/lib/dates';
+import { useWeek } from '@/hooks/useWeek';
+import { diffDays, todayLocal } from '@/lib/dates';
 import {
   formatExerciseCount,
   formatLongDate,
@@ -28,38 +32,50 @@ export default function TodayScreen() {
   const clearance = useTabBarClearance();
   const now = useNow();
   const today = todayLocal(now);
+  // The day being previewed: today until a day is picked in the strip or the calendar.
+  const [selected, setSelected] = useState(today);
+  const [calendarOpen, setCalendarOpen] = useState(false);
   const data = useTodayData(today);
-  const count = data.entries.length;
+  const week = useWeek(selected);
+  const entries = week.days.find((d) => d.date === selected)?.entries ?? [];
+  const count = entries.length;
+  const isToday = selected === today;
+  const isPast = diffDays(selected, today) < 0;
 
   const header = (
     <View style={styles.header}>
       <ScreenHeader
-        datePill={formatMonthDay(today)}
+        datePill={formatMonthDay(selected)}
+        onDatePress={() => setCalendarOpen(true)}
         title={greetingFor(now.getHours())}
         right={<HeaderActions />}
         onTitleLongPress={__DEV__ ? () => router.push('/debug') : undefined}
       />
       <View style={styles.strip}>
-        <DayStrip days={data.days} today={today} selected={today} />
+        <DayStrip days={week.days} today={today} selected={selected} onSelect={setSelected} />
       </View>
       <View style={styles.hero}>
         <HeroCard
-          eyebrow={formatLongDate(today)}
+          eyebrow={formatLongDate(selected)}
           title={
-            count === 0 ? 'No exercises logged yet' : `${formatExerciseCount(count)} logged so far`
+            count === 0
+              ? isToday
+                ? 'No exercises logged yet'
+                : 'Nothing logged'
+              : `${formatExerciseCount(count)} logged${isToday ? ' so far' : ''}`
           }
         >
           <PillButton
             label="Add exercise"
             variant="inverse"
             compact
-            onPress={() => router.push('/log')}
+            onPress={() => router.push(isToday ? '/log' : `/log?date=${selected}`)}
             style={styles.heroButton}
           />
         </HeroCard>
       </View>
       <Text style={[typography.eyebrow, styles.eyebrow, { color: colors.inkMuted }]}>
-        TODAY&apos;S LOG
+        {isToday ? "TODAY'S LOG" : `${formatMonthDay(selected).toUpperCase()} LOG`}
       </Text>
     </View>
   );
@@ -81,40 +97,56 @@ export default function TodayScreen() {
   );
 
   return (
-    <FlatList
-      style={{ backgroundColor: colors.bg }}
-      contentContainerStyle={[styles.content, { paddingBottom: clearance }]}
-      data={data.entries}
-      keyExtractor={(entry) => String(entry.id)}
-      renderItem={({ item }) => (
-        <View style={styles.row}>
-          <EntryRow entry={item} onPress={() => router.push(`/log?id=${item.id}`)} />
-        </View>
-      )}
-      ListHeaderComponent={header}
-      ListEmptyComponent={
-        data.loading ? (
-          <LoadingState />
-        ) : data.error ? (
-          <View style={styles.row}>
-            <EmptyState
-              title="Couldn't load your log."
-              message={data.error.message}
-              actionLabel="Try again"
-              onAction={data.reload}
-            />
-          </View>
-        ) : (
-          <View style={styles.row}>
-            <EmptyState
-              title="No exercises logged today."
-              message="Tap Add exercise, or the + below, to log your first one."
-            />
-          </View>
-        )
-      }
-      ListFooterComponent={<View style={styles.row}>{footer}</View>}
-    />
+    <>
+      <FlatList
+        style={{ backgroundColor: colors.bg }}
+        contentContainerStyle={[styles.content, { paddingBottom: clearance }]}
+        data={entries}
+        keyExtractor={(entry) => String(entry.id)}
+        renderItem={({ item, index }) => (
+          <Enter index={index} style={styles.row}>
+            <EntryRow entry={item} onPress={() => router.push(`/log?id=${item.id}`)} />
+          </Enter>
+        )}
+        ListHeaderComponent={header}
+        ListEmptyComponent={
+          week.loading ? (
+            <LoadingState />
+          ) : week.error ? (
+            <View style={styles.row}>
+              <EmptyState
+                title="Couldn't load your log."
+                message={week.error.message}
+                actionLabel="Try again"
+                onAction={week.reload}
+              />
+            </View>
+          ) : (
+            <View style={styles.row}>
+              <EmptyState
+                title={isToday ? 'No exercises logged today.' : 'No exercises logged this day.'}
+                message={
+                  isPast
+                    ? 'Tap Add exercise to log something you did that day.'
+                    : 'Tap Add exercise, or the + below, to log your first one.'
+                }
+              />
+            </View>
+          )
+        }
+        ListFooterComponent={<View style={styles.row}>{footer}</View>}
+      />
+      <CalendarSheet
+        visible={calendarOpen}
+        selected={selected}
+        today={today}
+        onClose={() => setCalendarOpen(false)}
+        onSelect={(date) => {
+          setSelected(date);
+          setCalendarOpen(false);
+        }}
+      />
+    </>
   );
 }
 

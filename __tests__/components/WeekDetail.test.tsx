@@ -2,7 +2,8 @@ import { fireEvent, render, screen, waitFor } from '@testing-library/react-nativ
 import { useState, type ReactNode } from 'react';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 
-import { WeekPage } from '@/components/WeekPage';
+import { WeekDetail } from '@/components/WeekDetail';
+import { WeekStripPage } from '@/components/WeekStripPage';
 import { createEntriesRepository } from '@/db/entries';
 import { runMigrations } from '@/db/migrations';
 import { RepositoryProvider } from '@/hooks/useRepository';
@@ -35,7 +36,7 @@ interface HarnessProps {
   onLogOnDay?: (date: string) => void;
 }
 
-/** Holds the selected weekday the way the Week screen does. */
+/** The strip and the detail share the selected weekday, as on the Week screen. */
 function Harness({
   weekStartDate = '2026-11-16',
   initialWeekday = 1,
@@ -44,17 +45,23 @@ function Harness({
 }: HarnessProps) {
   const [weekday, setWeekday] = useState(initialWeekday);
   return (
-    <WeekPage
-      weekStartDate={weekStartDate}
-      weekday={weekday}
-      today="2026-11-17"
-      width={390}
-      height={700}
-      bottomInset={90}
-      onSelectWeekday={setWeekday}
-      onOpenEntry={onOpenEntry}
-      onLogOnDay={onLogOnDay}
-    />
+    <>
+      <WeekStripPage
+        weekStartDate={weekStartDate}
+        weekday={weekday}
+        today="2026-11-17"
+        width={390}
+        onSelectWeekday={setWeekday}
+      />
+      <WeekDetail
+        weekStartDate={weekStartDate}
+        weekday={weekday}
+        today="2026-11-17"
+        bottomInset={90}
+        onOpenEntry={onOpenEntry}
+        onLogOnDay={onLogOnDay}
+      />
+    </>
   );
 }
 
@@ -79,7 +86,7 @@ async function renderPage(seed: NewEntry[] = FIXTURE, props: HarnessProps = {}) 
 
 const press = (name: string | RegExp) => fireEvent.press(screen.getByRole('button', { name }));
 
-describe('WeekPage (one week of the pager, docs/design/screens/04-week.png)', () => {
+describe('Week day row and detail (docs/design/screens/04-week.png)', () => {
   it('shows the selected day, its entries, the day stats and the week totals', async () => {
     await renderPage();
     expect(await screen.findByText('Tuesday, Nov 17 · Today')).toBeOnTheScreen();
@@ -107,7 +114,7 @@ describe('WeekPage (one week of the pager, docs/design/screens/04-week.png)', ()
     expect(screen.getByRole('button', { name: 'Wednesday, Nov 18' })).not.toBeSelected();
   });
 
-  it('shows another day of the week when it is tapped', async () => {
+  it('shows another day of the week when it is tapped in the row', async () => {
     await renderPage();
     await press(/^Monday, Nov 16/);
     expect(await screen.findByText('Monday, Nov 16')).toBeOnTheScreen();
@@ -115,6 +122,7 @@ describe('WeekPage (one week of the pager, docs/design/screens/04-week.png)', ()
     expect(screen.getByText('Push-ups')).toBeOnTheScreen();
     expect(screen.queryByText('Squat')).not.toBeOnTheScreen();
     expect(screen.getByText('2 exercises · 6 sets · 84 reps')).toBeOnTheScreen();
+    expect(screen.getByRole('button', { name: /^Monday, Nov 16/ })).toBeSelected();
   });
 
   it('distinguishes a past rest day from a day that has not happened yet', async () => {
@@ -126,8 +134,7 @@ describe('WeekPage (one week of the pager, docs/design/screens/04-week.png)', ()
     expect(await screen.findByText('Nothing logged yet')).toBeOnTheScreen();
   });
 
-  it("shows a different week's own entries and totals (what you swipe to)", async () => {
-    // The week before, with the Tuesday (the same weekday) selected.
+  it("shows a different week's own entries and totals (what the row has swiped to)", async () => {
     await renderPage(FIXTURE, { weekStartDate: '2026-11-09' });
     expect(await screen.findByText('Tuesday, Nov 10')).toBeOnTheScreen();
     expect(await screen.findByText('Old')).toBeOnTheScreen();

@@ -1,4 +1,3 @@
-import { memo } from 'react';
 import { FlatList, StyleSheet, Text, View } from 'react-native';
 
 import { useWeek } from '@/hooks/useWeek';
@@ -7,42 +6,33 @@ import { formatDayStats, formatDayTitle } from '@/lib/format';
 import type { DateString } from '@/lib/types';
 import { spacing, typography, useTheme } from '@/theme';
 
-import { DayStrip } from './DayStrip';
 import { EmptyState } from './EmptyState';
+import { Enter } from './Enter';
 import { EntryRow } from './EntryRow';
 import { LoadingState } from './LoadingState';
 import { WeekTotalsCard } from './WeekTotalsCard';
 
-interface WeekPageProps {
-  /** The Monday of the week this page shows. */
+interface WeekDetailProps {
+  /** The Monday of the week shown in the day row above. */
   weekStartDate: DateString;
-  /** 0 (Monday) to 6 (Sunday): the day highlighted on every page while swiping. */
+  /** 0 (Monday) to 6 (Sunday). */
   weekday: number;
   today: DateString;
-  width: number;
-  height: number;
   /** Space the floating tab bar covers at the bottom. */
   bottomInset: number;
-  onSelectWeekday: (weekday: number) => void;
   onOpenEntry: (id: number) => void;
   onLogOnDay: (date: DateString) => void;
 }
 
-/**
- * One week of the Week tab pager: day strip, the selected day's entries, and week totals. It
- * loads its own week, so the neighbouring weeks are ready by the time you swipe to them.
- */
-export const WeekPage = memo(function WeekPage({
+/** Everything under the day row: the selected day's entries and the week totals. It stays put while the row above is swiped. */
+export function WeekDetail({
   weekStartDate,
   weekday,
   today,
-  width,
-  height,
   bottomInset,
-  onSelectWeekday,
   onOpenEntry,
   onLogOnDay,
-}: WeekPageProps) {
+}: WeekDetailProps) {
   const { colors } = useTheme();
   const week = useWeek(weekStartDate);
   const day = week.days[weekday];
@@ -50,16 +40,7 @@ export const WeekPage = memo(function WeekPage({
   const emptyTitle = diffDays(selected, today) < 0 ? 'Rest day' : 'Nothing logged yet';
 
   return (
-    <View style={{ width, height }}>
-      <View style={styles.strip}>
-        <DayStrip
-          days={week.days}
-          today={today}
-          selected={selected}
-          onSelect={(date) => onSelectWeekday(week.days.findIndex((d) => d.date === date))}
-        />
-      </View>
-
+    <View style={styles.root}>
       <View style={styles.heading}>
         <Text
           accessibilityRole="header"
@@ -78,7 +59,11 @@ export const WeekPage = memo(function WeekPage({
         data={day?.entries ?? []}
         keyExtractor={(entry) => String(entry.id)}
         ItemSeparatorComponent={Separator}
-        renderItem={({ item }) => <EntryRow entry={item} onPress={() => onOpenEntry(item.id)} />}
+        renderItem={({ item, index }) => (
+          <Enter index={index}>
+            <EntryRow entry={item} onPress={() => onOpenEntry(item.id)} />
+          </Enter>
+        )}
         ListEmptyComponent={
           week.loading ? (
             <LoadingState />
@@ -106,14 +91,14 @@ export const WeekPage = memo(function WeekPage({
       </View>
     </View>
   );
-});
+}
 
 function Separator() {
   return <View style={styles.separator} />;
 }
 
 const styles = StyleSheet.create({
-  strip: { marginTop: spacing.lg },
+  root: { flex: 1 },
   heading: {
     flexDirection: 'row',
     alignItems: 'baseline',

@@ -1,4 +1,6 @@
-import { fireEvent, render, screen } from '@testing-library/react-native';
+import { fireEvent, render, screen, within } from '@testing-library/react-native';
+import { StyleSheet } from 'react-native';
+import { size } from '@/theme';
 import { router } from 'expo-router';
 import type { ReactNode } from 'react';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
@@ -119,6 +121,26 @@ describe('Week screen: swiping between weeks', () => {
     await swipeToPage(PAGER_CENTER);
     expect(await screen.findByText('Nov 16 – Nov 22')).toBeOnTheScreen();
     expect(screen.queryByRole('button', { name: 'Back to this week' })).not.toBeOnTheScreen();
+  });
+
+  it('scrolls only the row of days: the pager is as tall as that row, nothing else is in it', async () => {
+    await renderWeek();
+    const box = screen.getByTestId('week-pager-box');
+    expect(StyleSheet.flatten(box.props.style).height).toBe(size.dayCellH);
+    // The entries and totals are not inside the pager, so they cannot scroll sideways.
+    expect(within(screen.getByTestId('week-pager')).queryByText('WEEK TOTALS')).toBeNull();
+    expect(within(screen.getByTestId('week-pager')).queryByText('Squat')).toBeNull();
+    expect(screen.getByText('WEEK TOTALS')).toBeOnTheScreen();
+  });
+
+  it('keeps the same weekday selected and moves the entries below to the new week', async () => {
+    await renderWeek();
+    expect(await screen.findByText('Squat')).toBeOnTheScreen();
+    await swipeToPage(PAGER_CENTER + 1);
+    expect(await screen.findByText('Tuesday, Nov 24')).toBeOnTheScreen();
+    expect(screen.queryByText('Squat')).not.toBeOnTheScreen();
+    await swipeToPage(PAGER_CENTER);
+    expect(await screen.findByText('Squat')).toBeOnTheScreen();
   });
 
   it('changes week only once a swipe passes halfway to the next page', async () => {

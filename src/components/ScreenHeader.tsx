@@ -6,6 +6,7 @@ import { radius, size, spacing, typography, useTheme } from '@/theme';
 
 import { GlassSurface } from './GlassSurface';
 import { Icon } from './Icon';
+import { PressableScale } from './PressableScale';
 
 interface ScreenHeaderProps {
   /** Pill on the left, e.g. 'Nov 17'. */
@@ -14,20 +15,37 @@ interface ScreenHeaderProps {
   title: string;
   /** Optional round button on the right (the CSV export button on Today). */
   right?: ReactNode;
+  /** Opens the calendar when the date pill is tapped. */
+  onDatePress?: () => void;
   /** Hidden developer gesture; pass undefined in release builds. */
   onTitleLongPress?: () => void;
 }
 
-export function ScreenHeader({ datePill, title, right, onTitleLongPress }: ScreenHeaderProps) {
+export function ScreenHeader({
+  datePill,
+  title,
+  right,
+  onDatePress,
+  onTitleLongPress,
+}: ScreenHeaderProps) {
   const { colors } = useTheme();
   const insets = useSafeAreaInsets();
 
   return (
     <View style={[styles.row, { paddingTop: insets.top + spacing.sm }]}>
-      <GlassSurface style={styles.pill}>
-        <Icon name="calendar" color={colors.ink} size={16} strokeWidth={2} />
-        <Text style={[typography.body, styles.pillText, { color: colors.ink }]}>{datePill}</Text>
-      </GlassSurface>
+      <PressableScale
+        scaleTo={0.94}
+        accessibilityRole="button"
+        accessibilityLabel={`Open calendar, ${datePill}`}
+        disabled={!onDatePress}
+        onPress={onDatePress}
+        style={styles.pillHit}
+      >
+        <GlassSurface interactive style={styles.pill}>
+          <Icon name="calendar" color={colors.ink} size={16} strokeWidth={2} />
+          <Text style={[typography.body, styles.pillText, { color: colors.ink }]}>{datePill}</Text>
+        </GlassSurface>
+      </PressableScale>
       {/* Shrinks to fit when the right-hand buttons and a large text size leave little room. */}
       <Text
         accessibilityRole="header"
@@ -54,8 +72,8 @@ const styles = StyleSheet.create({
     paddingHorizontal: spacing.screenX,
   },
   title: { flexShrink: 1, textAlign: 'center' },
+  pillHit: { flexShrink: 0 },
   pill: {
-    flexShrink: 0,
     minHeight: 40,
     flexDirection: 'row',
     alignItems: 'center',

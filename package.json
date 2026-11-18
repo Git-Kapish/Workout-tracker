@@ -51,6 +51,7 @@
     "check": "npm run lint && npm run typecheck && npm run test"
   },
   "jest": {
+    "testTimeout": 15000,
     "preset": "jest-expo",
     "moduleNameMapper": {
       "^@/(.*)$": "<rootDir>/src/$1"

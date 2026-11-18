@@ -1,10 +1,11 @@
-import { Pressable, StyleSheet, Text, View } from 'react-native';
+import { StyleSheet, Text, View } from 'react-native';
 
 import { formatEntryDetail, formatEntryTotals } from '@/lib/format';
 import type { Entry } from '@/lib/types';
 import { radius, size, spacing, typography, useTheme } from '@/theme';
 
 import { IconTile } from './IconTile';
+import { PressableScale } from './PressableScale';
 
 interface EntryRowProps {
   entry: Entry;
@@ -18,7 +19,8 @@ export function EntryRow({ entry, onPress }: EntryRowProps) {
   const totals = formatEntryTotals(entry);
 
   return (
-    <Pressable
+    <PressableScale
+      scaleTo={0.98}
       accessibilityRole="button"
       accessibilityLabel={`${entry.exerciseName}, ${detail}, ${totals.reps}. Edit`}
       onPress={onPress}
@@ -40,7 +42,7 @@ export function EntryRow({ entry, onPress }: EntryRowProps) {
           {totals.volume}
         </Text>
       </View>
-    </Pressable>
+    </PressableScale>
   );
 }
 
