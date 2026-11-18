@@ -1,5 +1,6 @@
 import { Image, Pressable, StyleSheet, Text, View, type ImageSourcePropType } from 'react-native';
 
+import { haptics } from '@/platform/haptics';
 import { APP_ICON_OPTIONS, type AppIconId } from '@/lib/appIcons';
 import { radius, spacing, typography, useTheme } from '@/theme';
 
@@ -34,7 +35,10 @@ export function AppIconPicker({ selected, onSelect, disabled = false }: AppIconP
             accessibilityLabel={`${option.label} app icon, ${option.description}`}
             accessibilityState={{ checked: isSelected, disabled }}
             disabled={disabled}
-            onPress={() => onSelect(option.id)}
+            onPress={() => {
+              haptics.selection();
+              onSelect(option.id);
+            }}
             style={({ pressed }) => [styles.option, pressed && styles.pressed]}
           >
             <View style={[styles.ring, { borderColor: isSelected ? colors.ink : 'transparent' }]}>

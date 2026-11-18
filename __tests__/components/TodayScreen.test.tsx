@@ -1,4 +1,4 @@
-import { fireEvent, render, screen, waitFor } from '@testing-library/react-native';
+import { act, fireEvent, render, screen, waitFor } from '@testing-library/react-native';
 import { router } from 'expo-router';
 import type { ReactNode } from 'react';
 import { StyleSheet } from 'react-native';
@@ -113,6 +113,35 @@ describe('Today: the week row now selects a day', () => {
   });
 });
 
+/** Drives the calendar grid swipe directly (a pan only claims the touch once it moves). */
+async function swipeCalendar(dx: number, ms: number) {
+  const grid = screen.getByTestId('calendar-grid');
+  const touch = (x: number, time: number) => ({
+    touchHistory: {
+      indexOfSingleActiveTouch: 0,
+      numberActiveTouches: 1,
+      mostRecentTimeStamp: time,
+      touchBank: [
+        {
+          touchActive: true,
+          startPageX: 200,
+          startPageY: 400,
+          startTimeStamp: 0,
+          currentPageX: x,
+          currentPageY: 400,
+          currentTimeStamp: time,
+          previousPageX: 200,
+          previousPageY: 400,
+          previousTimeStamp: 0,
+        },
+      ],
+    },
+  });
+  await act(async () => grid.props.onResponderGrant(touch(200, 0)));
+  await act(async () => grid.props.onResponderMove(touch(200 + dx, ms)));
+  await act(async () => grid.props.onResponderRelease(touch(200 + dx, ms + 1)));
+}
+
 describe('Today: the date button opens a calendar', () => {
   it('opens a month calendar for the month of the selected day', async () => {
     await renderToday();
@@ -160,6 +189,28 @@ describe('Today: the date button opens a calendar', () => {
     await press('Previous month');
     await press('Previous month');
     expect(await screen.findByText('October 2026')).toBeOnTheScreen();
+  });
+
+  it('slides to the next month with a swipe left, and back with a swipe right', async () => {
+    await renderToday();
+    await press(/^Open calendar/);
+    await screen.findByText('November 2026');
+    await swipeCalendar(-120, 400);
+    expect(await screen.findByText('December 2026')).toBeOnTheScreen();
+    await swipeCalendar(120, 400);
+    expect(await screen.findByText('November 2026')).toBeOnTheScreen();
+    await swipeCalendar(120, 400);
+    expect(await screen.findByText('October 2026')).toBeOnTheScreen();
+  });
+
+  it('also changes month on a short quick flick, but not on a tiny slow drag', async () => {
+    await renderToday();
+    await press(/^Open calendar/);
+    await screen.findByText('November 2026');
+    await swipeCalendar(-20, 600); // too short and slow
+    expect(screen.getByText('November 2026')).toBeOnTheScreen();
+    await swipeCalendar(-40, 30); // fast flick
+    expect(await screen.findByText('December 2026')).toBeOnTheScreen();
   });
 
   it('jumps Today to the picked day and closes the calendar', async () => {

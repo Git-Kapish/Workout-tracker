@@ -88,11 +88,14 @@ export default function TodayScreen() {
           {formatReps(data.thisWeek.totalReps)}
         </Text>
       </Text>
-      <TrendBadge
-        trend={data.repsComparison.trend}
-        percent={data.repsComparison.percent}
-        suffix=" vs last week"
-      />
+      {/* The badge top-aligns itself, so it gets its own box that the row can centre. */}
+      <View>
+        <TrendBadge
+          trend={data.repsComparison.trend}
+          percent={data.repsComparison.percent}
+          suffix=" vs last week"
+        />
+      </View>
     </View>
   );
 

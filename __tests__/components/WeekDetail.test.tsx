@@ -1,9 +1,11 @@
 import { fireEvent, render, screen, waitFor } from '@testing-library/react-native';
 import { useState, type ReactNode } from 'react';
+import { StyleSheet } from 'react-native';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 
 import { WeekDetail } from '@/components/WeekDetail';
 import { WeekStripPage } from '@/components/WeekStripPage';
+import { lightPalette } from '@/theme/colors';
 import { createEntriesRepository } from '@/db/entries';
 import { runMigrations } from '@/db/migrations';
 import { RepositoryProvider } from '@/hooks/useRepository';
@@ -85,6 +87,27 @@ async function renderPage(seed: NewEntry[] = FIXTURE, props: HarnessProps = {}) 
 }
 
 const press = (name: string | RegExp) => fireEvent.press(screen.getByRole('button', { name }));
+
+describe('Week totals float over the list', () => {
+  it('is positioned over the content above the tab bar, with a shadow', async () => {
+    await renderPage();
+    const card = screen.getByTestId('week-totals-float');
+    const style = StyleSheet.flatten(card.props.style);
+    expect(style.position).toBe('absolute');
+    expect(style.bottom).toBe(90);
+    expect(style.boxShadow).toContain(lightPalette.floatShadow);
+  });
+
+  it('pads the list by the card height so the last entry can scroll clear of it', async () => {
+    await renderPage();
+    await fireEvent(screen.getByTestId('week-totals-float'), 'layout', {
+      nativeEvent: { layout: { x: 0, y: 0, width: 358, height: 130 } },
+    });
+    const list = screen.getByTestId('week-detail-list');
+    const padding = StyleSheet.flatten(list.props.contentContainerStyle).paddingBottom;
+    expect(padding).toBeGreaterThanOrEqual(90 + 130);
+  });
+});
 
 describe('Week day row and detail (docs/design/screens/04-week.png)', () => {
   it('shows the selected day, its entries, the day stats and the week totals', async () => {

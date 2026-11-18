@@ -12,6 +12,7 @@ import {
 
 import { useExerciseNames } from './queries';
 import { useEntryMutations } from './useEntryMutations';
+import { haptics } from '@/platform/haptics';
 import { useRepository } from './useRepository';
 
 interface Options {
@@ -159,6 +160,7 @@ export function useEntryForm({ entry, initialDate, onSaved, onDeleted }: Options
       numbersAreUntouched.current = true;
       lastPrefillKey.current = null;
     }
+    haptics.success();
     onSaved?.(saved);
     return saved;
   }, [validation, entry, mutations, onSaved]);
@@ -167,7 +169,10 @@ export function useEntryForm({ entry, initialDate, onSaved, onDeleted }: Options
   const remove = useCallback(async (): Promise<boolean> => {
     if (!entry) return false;
     const deleted = await mutations.remove(entry.id);
-    if (deleted) onDeleted?.();
+    if (deleted) {
+      haptics.warning();
+      onDeleted?.();
+    }
     return deleted;
   }, [entry, mutations, onDeleted]);
 

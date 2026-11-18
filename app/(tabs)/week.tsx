@@ -13,6 +13,7 @@ import { WeekNavigator } from '@/components/WeekNavigator';
 import { WeekDetail } from '@/components/WeekDetail';
 import { WeekStripPage } from '@/components/WeekStripPage';
 import { useTabBarClearance } from '@/hooks/useTabBarClearance';
+import { haptics } from '@/platform/haptics';
 import { useToday } from '@/hooks/useNow';
 import { weekdayIndex } from '@/lib/dates';
 import { formatWeekRelative } from '@/lib/format';
@@ -59,9 +60,11 @@ export default function WeekScreen() {
     (event: NativeSyntheticEvent<NativeScrollEvent>) => {
       if (!width) return;
       const next = pageFromOffset(event.nativeEvent.contentOffset.x, width);
-      setPage((current) => (current === next ? current : next));
+      if (next === page) return;
+      haptics.selection(); // one tick per week passed
+      setPage(next);
     },
-    [width],
+    [width, page],
   );
 
   const onLayout = useCallback((event: LayoutChangeEvent) => {

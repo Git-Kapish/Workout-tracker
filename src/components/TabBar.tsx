@@ -5,6 +5,7 @@ import { Animated, PanResponder, StyleSheet, Text, View } from 'react-native';
 
 import { useReduceMotion } from '@/hooks/useReduceMotion';
 import { tabBarBottomOffset } from '@/hooks/useTabBarClearance';
+import { haptics } from '@/platform/haptics';
 import { highlightPosition, nearestTab, type TabBox } from '@/lib/tabScrub';
 import { floatingBar, radius, size, spacing, typography, useTheme } from '@/theme';
 
@@ -56,6 +57,7 @@ export function TabBar({ state, descriptors, emitter, navigateToTab, insets }: B
   const [scrubbing, setScrubbing] = useState<string | null>(null);
   const [highlightX] = useState(() => new Animated.Value(0));
   const dragging = useRef(false);
+  const lastScrub = useRef<string | null>(null);
 
   const tabRoutes = state.routes.filter((route) => route.name in TAB_ICONS);
 
@@ -65,7 +67,10 @@ export function TabBar({ state, descriptors, emitter, navigateToTab, insets }: B
     const event = emitter.emit({ type: 'tabPress', target: route.key, canPreventDefault: true });
     // Compare with the real focused route: on a detail screen the highlighted item must
     // still navigate back to its list.
-    if (focusedName !== route.name && !event.defaultPrevented) navigateToTab(route.key);
+    if (focusedName !== route.name && !event.defaultPrevented) {
+      haptics.selection();
+      navigateToTab(route.key);
+    }
   };
 
   // Gesture callbacks outlive renders, so they read the latest values through a ref.
@@ -111,6 +116,7 @@ export function TabBar({ state, descriptors, emitter, navigateToTab, insets }: B
         Math.abs(g.dx) > 8 && Math.abs(g.dx) > Math.abs(g.dy) * 1.5,
       onPanResponderGrant: () => {
         dragging.current = true;
+        lastScrub.current = latest.current.selectedName;
       },
       onPanResponderMove: (_, g) => {
         const x = g.moveX - floatingBar.sideMargin;
@@ -118,6 +124,10 @@ export function TabBar({ state, descriptors, emitter, navigateToTab, insets }: B
         const target = nearest(x);
         if (position === null || !target) return;
         highlightX.setValue(position);
+        if (lastScrub.current !== target) {
+          lastScrub.current = target;
+          haptics.selection(); // a tick each time the finger crosses onto a new tab
+        }
         setScrubbing((current) => (current === target ? current : target));
       },
       onPanResponderRelease: (_, g) => {

@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
 import { Animated, StyleSheet, Text, View } from 'react-native';
 
+import { haptics } from '@/platform/haptics';
 import { useReduceMotion } from '@/hooks/useReduceMotion';
 import { parseLocalDate } from '@/lib/dates';
 import { formatLongDate } from '@/lib/format';
@@ -75,7 +76,10 @@ export function DayStrip({ days, today, selected, onSelect }: DayStripProps) {
             key={date}
             scaleTo={0.92}
             disabled={!onSelect}
-            onPress={() => onSelect?.(date)}
+            onPress={() => {
+              if (date !== selected) haptics.selection();
+              onSelect?.(date);
+            }}
             onLayout={(event) => {
               cellX.current[index] = event.nativeEvent.layout.x;
               if (index === selectedIndex && !placed) {

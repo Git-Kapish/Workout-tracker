@@ -1,10 +1,11 @@
+import { useState } from 'react';
 import { FlatList, StyleSheet, Text, View } from 'react-native';
 
 import { useWeek } from '@/hooks/useWeek';
 import { diffDays } from '@/lib/dates';
 import { formatDayStats, formatDayTitle } from '@/lib/format';
 import type { DateString } from '@/lib/types';
-import { spacing, typography, useTheme } from '@/theme';
+import { radius, spacing, typography, useTheme } from '@/theme';
 
 import { EmptyState } from './EmptyState';
 import { Enter } from './Enter';
@@ -34,6 +35,8 @@ export function WeekDetail({
   onLogOnDay,
 }: WeekDetailProps) {
   const { colors } = useTheme();
+  // The totals card floats over the list, so the list is padded by the card's measured height.
+  const [cardHeight, setCardHeight] = useState(120);
   const week = useWeek(weekStartDate);
   const day = week.days[weekday];
   const selected = day?.date ?? weekStartDate;
@@ -54,8 +57,12 @@ export function WeekDetail({
       </View>
 
       <FlatList
+        testID="week-detail-list"
         style={styles.list}
-        contentContainerStyle={styles.listContent}
+        contentContainerStyle={[
+          styles.listContent,
+          { paddingBottom: bottomInset + cardHeight + spacing.md },
+        ]}
         data={day?.entries ?? []}
         keyExtractor={(entry) => String(entry.id)}
         ItemSeparatorComponent={Separator}
@@ -86,7 +93,14 @@ export function WeekDetail({
         }
       />
 
-      <View style={[styles.totals, { marginBottom: bottomInset }]}>
+      <View
+        testID="week-totals-float"
+        onLayout={(event) => setCardHeight(event.nativeEvent.layout.height)}
+        style={[
+          styles.totals,
+          { bottom: bottomInset, boxShadow: `0 10px 28px ${colors.floatShadow}` },
+        ]}
+      >
         <WeekTotalsCard summary={week.summary} />
       </View>
     </View>
@@ -113,5 +127,10 @@ const styles = StyleSheet.create({
   list: { flex: 1 },
   listContent: { paddingHorizontal: spacing.screenX },
   separator: { height: 10 },
-  totals: { marginHorizontal: spacing.screenX, marginTop: spacing.sm },
+  totals: {
+    position: 'absolute',
+    left: spacing.screenX,
+    right: spacing.screenX,
+    borderRadius: radius.hero,
+  },
 });

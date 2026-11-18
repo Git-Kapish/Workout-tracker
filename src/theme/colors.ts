@@ -36,6 +36,8 @@ export interface Palette {
   glassFallback: string;
   glassBorder: string;
   shadow: string;
+  /** Stronger shadow under cards that float over scrolling content. */
+  floatShadow: string;
 }
 
 export const lightPalette: Palette = {
@@ -69,6 +71,7 @@ export const lightPalette: Palette = {
   glassFallback: 'rgba(255,255,255,0.92)',
   glassBorder: 'rgba(255,255,255,0.9)',
   shadow: 'rgba(20,20,30,0.06)',
+  floatShadow: 'rgba(20,20,30,0.28)',
 };
 
 // PROVISIONAL: dark mode is not designed yet (DESIGN.md §3.4, built in Phase 6).
@@ -104,4 +107,5 @@ export const darkPalette: Palette = {
   glassFallback: 'rgba(38,38,44,0.94)',
   glassBorder: 'rgba(255,255,255,0.12)',
   shadow: 'rgba(0,0,0,0.4)',
+  floatShadow: 'rgba(0,0,0,0.7)',
 };

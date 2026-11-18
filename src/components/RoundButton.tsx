@@ -1,5 +1,6 @@
 import { StyleSheet } from 'react-native';
 
+import { haptics } from '@/platform/haptics';
 import { radius, size, useTheme } from '@/theme';
 
 import { GlassSurface } from './GlassSurface';
@@ -31,7 +32,10 @@ export function RoundButton({
       accessibilityLabel={label}
       accessibilityState={{ disabled, busy }}
       disabled={disabled}
-      onPress={onPress}
+      onPress={() => {
+        haptics.tap();
+        onPress();
+      }}
       scaleTo={0.9}
       style={[styles.hit, busy && styles.busy]}
     >

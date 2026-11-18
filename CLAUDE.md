@@ -45,7 +45,7 @@ npm run check             # lint + typecheck + test  <-- run before ending every
 - Tests: Jest via `jest-expo`, `@testing-library/react-native`
 - Lint/format: ESLint (`eslint-config-expo`) + Prettier
 - CSV export: `expo-file-system` + `expo-sharing`
-- Liquid glass: `expo-glass-effect` · App icon switching: `expo-alternate-app-icons` (both approved by the user)
+- Haptics: `expo-haptics` (approved; only via `src/platform/haptics.ts`) · Liquid glass: `expo-glass-effect` · App icon switching: `expo-alternate-app-icons` (both approved by the user)
 - **No** date library, backend, auth, analytics, or network calls.
 
 ---

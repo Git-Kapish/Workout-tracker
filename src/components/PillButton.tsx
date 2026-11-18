@@ -1,5 +1,6 @@
 import { StyleSheet, Text, type StyleProp, type ViewStyle } from 'react-native';
 
+import { haptics } from '@/platform/haptics';
 import { radius, size, spacing, typography, useTheme } from '@/theme';
 
 import { PressableScale } from './PressableScale';
@@ -39,7 +40,10 @@ export function PillButton({
       accessibilityLabel={accessibilityLabel ?? label}
       accessibilityState={{ disabled }}
       disabled={disabled}
-      onPress={onPress}
+      onPress={() => {
+        haptics.tap();
+        onPress();
+      }}
       style={[
         styles.base,
         compact ? styles.compact : styles.regular,
