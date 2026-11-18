@@ -1,6 +1,7 @@
 import { diffDays, parseLocalDate, weekdayIndex } from './dates';
 import { MONTHS_SHORT, WEEKDAYS_LONG, WEEKDAYS_SHORT } from './labels';
 import type { DateString, Entry, MetricComparison, Summary, Trend } from './types';
+import type { PersonalBests } from './metrics';
 import { weekStart } from './weeks';
 
 // Display formatting. Hand-rolled (not toLocaleString) so output is identical on every
@@ -105,6 +106,44 @@ export function formatDateLabel(date: DateString, today: DateString): string {
   if (diff === 1) return `Tomorrow, ${short} ${formatMonthDay(date)}`;
   const year = y === parts(today).y ? '' : `, ${y}`;
   return `${short}, ${formatMonthDay(date)}${year}`;
+}
+
+/** 'Nov 16', or 'Nov 16, 2025' when it is not in the same year as `today`. */
+export function formatShortDate(date: DateString, today: DateString): string {
+  return parts(date).y === parts(today).y
+    ? formatMonthDay(date)
+    : `${formatMonthDay(date)}, ${parts(date).y}`;
+}
+
+/** 'Last done Nov 16' */
+export function formatLastDone(date: DateString, today: DateString): string {
+  return `Last done ${formatShortDate(date, today)}`;
+}
+
+/** The "Best" figure on the exercise list: '42.5 kg' or '6 reps'. */
+export function formatBest(best: { kind: 'weight' | 'reps'; value: number }): string {
+  return best.kind === 'weight' ? formatWeight(best.value) : formatReps(best.value);
+}
+
+const NO_RECORD = '—';
+
+/** Text for the three record cards; '—' where there is no record (e.g. bodyweight). */
+export function formatPersonalBests(bests: PersonalBests): {
+  maxWeight: string;
+  bestVolume: string;
+  maxReps: string;
+} {
+  return {
+    maxWeight: bests.maxWeightKg === null ? NO_RECORD : formatWeight(bests.maxWeightKg),
+    bestVolume: bests.bestVolumeKg === null ? NO_RECORD : formatVolume(bests.bestVolumeKg),
+    maxReps: bests.maxRepsPerSet === null ? NO_RECORD : formatNumber(bests.maxRepsPerSet, 0),
+  };
+}
+
+/** '6 EXERCISES', '1 EXERCISE', or '2 OF 6 EXERCISES' while filtering. */
+export function formatExerciseListCount(shown: number, total: number): string {
+  const noun = total === 1 ? 'EXERCISE' : 'EXERCISES';
+  return shown === total ? `${total} ${noun}` : `${shown} OF ${total} ${noun}`;
 }
 
 /** 'Tuesday, Nov 17 · Today' (the suffix only for today). */

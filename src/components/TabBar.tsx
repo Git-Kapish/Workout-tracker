@@ -13,39 +13,52 @@ const TAB_ICONS: Record<string, IconName> = {
   exercises: 'dumbbell',
 };
 
+// Hidden routes that live inside the tabs: they get no bar item and keep their parent's item
+// highlighted (the design shows the bar with "Exercises" active on the exercise detail).
+const PARENT_TAB: Record<string, string> = { 'exercise/[name]': 'exercises' };
+
+/** Which bar item is highlighted while the route named `routeName` is showing. */
+export function activeTabName(routeName: string): string {
+  return PARENT_TAB[routeName] ?? routeName;
+}
+
 // The centre "+" is not a tab: it opens the log modal (DESIGN.md §3.1).
 export function TabBar({ state, descriptors, emitter, navigateToTab, insets }: BottomTabBarProps) {
   const { colors } = useTheme();
+  const focusedName = state.routes[state.index]?.name ?? '';
 
-  const items = state.routes.map((route, index) => {
+  const items = state.routes.flatMap((route) => {
+    if (!(route.name in TAB_ICONS)) return []; // hidden route: no bar item
     const { options } = descriptors[route.key];
     const label = typeof options.title === 'string' ? options.title : route.name;
-    const focused = state.index === index;
-    const tint = focused ? colors.ink : colors.inkMuted;
+    const selected = activeTabName(focusedName) === route.name;
+    const tint = selected ? colors.ink : colors.inkMuted;
 
     const onPress = () => {
       const event = emitter.emit({ type: 'tabPress', target: route.key, canPreventDefault: true });
-      if (!focused && !event.defaultPrevented) navigateToTab(route.key);
+      // Compare with the real focused route: on a detail screen the highlighted item must
+      // still navigate back to its list.
+      if (focusedName !== route.name && !event.defaultPrevented) navigateToTab(route.key);
     };
 
-    return (
+    return [
       <Pressable
         key={route.key}
         accessibilityRole="tab"
         accessibilityLabel={label}
-        accessibilityState={{ selected: focused }}
+        accessibilityState={{ selected }}
         onPress={onPress}
         style={styles.item}
       >
         <Icon name={TAB_ICONS[route.name] ?? 'home'} color={tint} />
         <Text
-          style={[typography.tabLabel, { color: tint, fontWeight: focused ? '600' : '500' }]}
+          style={[typography.tabLabel, { color: tint, fontWeight: selected ? '600' : '500' }]}
           numberOfLines={1}
         >
           {label}
         </Text>
-      </Pressable>
-    );
+      </Pressable>,
+    ];
   });
 
   const plus = (
@@ -72,7 +85,7 @@ export function TabBar({ state, descriptors, emitter, navigateToTab, insets }: B
         },
       ]}
     >
-      <View style={styles.row}>{[items[0], items[1], plus, items[2], items[3]]}</View>
+      <View style={styles.row}>{[...items.slice(0, 2), plus, ...items.slice(2)]}</View>
     </View>
   );
 }

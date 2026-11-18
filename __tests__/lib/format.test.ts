@@ -1,6 +1,11 @@
 import {
+  formatBest,
   formatCompactNumber,
   formatDateLabel,
+  formatExerciseListCount,
+  formatLastDone,
+  formatPersonalBests,
+  formatShortDate,
   formatNumericMonthDay,
   formatOverallDetail,
   formatOverallHeadline,
@@ -93,6 +98,28 @@ describe('date labels', () => {
     expect(formatWeekRelative('2026-10-26', today)).toBe('3 weeks ago');
     expect(formatWeekRelative('2026-12-07', today)).toBe('In 3 weeks');
     expect(formatWeekRelative('2026-12-28', '2027-01-02')).toBe('This week'); // across New Year
+  });
+
+  it('formats exercise list and history text (DESIGN.md 06 and 07)', () => {
+    const today = '2026-11-17';
+    expect(formatShortDate('2026-11-16', today)).toBe('Nov 16');
+    expect(formatShortDate('2025-12-31', today)).toBe('Dec 31, 2025');
+    expect(formatLastDone('2026-11-16', today)).toBe('Last done Nov 16');
+    expect(formatBest({ kind: 'weight', value: 42.5 })).toBe('42.5 kg');
+    expect(formatBest({ kind: 'reps', value: 6 })).toBe('6 reps');
+    expect(formatExerciseListCount(6, 6)).toBe('6 EXERCISES');
+    expect(formatExerciseListCount(1, 1)).toBe('1 EXERCISE');
+    expect(formatExerciseListCount(2, 6)).toBe('2 OF 6 EXERCISES');
+    expect(formatExerciseListCount(0, 6)).toBe('0 OF 6 EXERCISES');
+  });
+
+  it('formats the three record cards, with a dash where there is no record', () => {
+    expect(
+      formatPersonalBests({ maxWeightKg: 42.5, bestVolumeKg: 1275, maxRepsPerSet: 10 }),
+    ).toEqual({ maxWeight: '42.5 kg', bestVolume: '1,275 kg', maxReps: '10' });
+    expect(
+      formatPersonalBests({ maxWeightKg: null, bestVolumeKg: null, maxRepsPerSet: 6 }),
+    ).toEqual({ maxWeight: '—', bestVolume: '—', maxReps: '6' });
   });
 
   it('formats chart axis dates and compact values', () => {

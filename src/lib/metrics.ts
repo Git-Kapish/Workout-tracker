@@ -24,6 +24,33 @@ export function summarize(entries: readonly Summarizable[]): Summary {
   };
 }
 
+export interface PersonalBests {
+  /** Heaviest load used. null if the exercise was never logged with a weight. */
+  maxWeightKg: number | null;
+  /** Largest sets x reps x weight in a single entry. null without a weight. */
+  bestVolumeKg: number | null;
+  /** Most reps in one set. */
+  maxRepsPerSet: number | null;
+}
+
+/**
+ * A blank weight and 0 kg both mean "no load" (bodyweight), so neither can be a weight or
+ * volume record; they still count for reps. An empty history has no records at all.
+ */
+export function personalBests(entries: readonly Summarizable[]): PersonalBests {
+  let maxWeightKg: number | null = null;
+  let bestVolumeKg: number | null = null;
+  let maxRepsPerSet: number | null = null;
+  for (const e of entries) {
+    if (maxRepsPerSet === null || e.reps > maxRepsPerSet) maxRepsPerSet = e.reps;
+    if (e.weightKg === null || e.weightKg <= 0) continue;
+    if (maxWeightKg === null || e.weightKg > maxWeightKg) maxWeightKg = e.weightKg;
+    const volume = round2(e.sets * e.reps * e.weightKg);
+    if (bestVolumeKg === null || volume > bestVolumeKg) bestVolumeKg = volume;
+  }
+  return { maxWeightKg, bestVolumeKg, maxRepsPerSet };
+}
+
 function groupBy<T>(items: readonly T[], key: (item: T) => string): Record<string, T[]> {
   const groups: Record<string, T[]> = {};
   for (const item of items) {

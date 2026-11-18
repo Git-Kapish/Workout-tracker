@@ -1,4 +1,4 @@
-import Svg, { Path, Rect } from 'react-native-svg';
+import Svg, { Circle, Path, Rect } from 'react-native-svg';
 
 import { size } from '@/theme';
 
@@ -13,6 +13,7 @@ export type IconName =
   | 'chevronRight'
   | 'chevronLeft'
   | 'moon'
+  | 'search'
   | 'arrowUp'
   | 'arrowDown'
   | 'minus'
@@ -54,6 +55,12 @@ export function Icon({ name, color, size: px = size.icon, strokeWidth = 1.8 }: I
       {name === 'close' && <Path d="M6 6l12 12M18 6 6 18" />}
       {name === 'chevronRight' && <Path d="M9 5l7 7-7 7" />}
       {name === 'chevronLeft' && <Path d="M15 5l-7 7 7 7" />}
+      {name === 'search' && (
+        <>
+          <Circle cx={11} cy={11} r={6.5} />
+          <Path d="M16 16l4 4" />
+        </>
+      )}
       {name === 'moon' && <Path d="M20 14.5A8 8 0 0 1 9.5 4 8 8 0 1 0 20 14.5z" />}
       {name === 'arrowUp' && <Path d="M12 19V5M6 11l6-6 6 6" />}
       {name === 'arrowDown' && <Path d="M12 5v14M6 13l6 6 6-6" />}

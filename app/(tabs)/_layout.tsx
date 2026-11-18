@@ -15,6 +15,8 @@ export default function TabsLayout() {
       <Tabs.Screen name="week" options={{ title: 'Week' }} />
       <Tabs.Screen name="progress" options={{ title: 'Progress' }} />
       <Tabs.Screen name="exercises" options={{ title: 'Exercises' }} />
+      {/* Opened from the Exercises list; TabBar hides it and keeps "Exercises" active. */}
+      <Tabs.Screen name="exercise/[name]" options={{ title: 'Exercise' }} />
     </Tabs>
   );
 }
